@@ -21,7 +21,7 @@ public class CurrencyTypeServiceProvider {
 	OutputElement outputElement = new OutputElement();
 	List<Results> results = outputElement.getResults();
 	
-	public OutputElement updateCurrencyType(InputElement inputElement){
+	public OutputElement updateCurrencyType(InputElement inputElement) throws Exception{
 		logger.info("Entering - com.arris.sfdc.soap.provider.CurrencyTypeSoapProvider.updateCurrencyType(InputElement) : "+inputElement);
 		
 		List<CurrencyDetails> listCurrencyDetails = inputElement.getCurrencyDetails();
@@ -42,10 +42,11 @@ public class CurrencyTypeServiceProvider {
 		}
 		
 		//Below code is for to update in SFDC using connection
-		EnterpriseConnection connection = SFDCConnection.getEnterpriseConnection();
-		logger.info("connection = "+connection);
-		if(connection != null){
-			try{
+		try{
+			EnterpriseConnection connection = SFDCConnection.getEnterpriseConnection();
+			logger.info("connection = "+connection);
+			if(connection != null){
+			
 				logger.info("SFDC Update Begins");
 				SaveResult saveResult[] = connection.update(currencyType);
 				if(saveResult != null){
@@ -72,20 +73,21 @@ public class CurrencyTypeServiceProvider {
 					}
 				}
 			}
-			catch(Exception e){
-				logger.error("Error in updating CurrencyType : "+e.getMessage());
-				e.printStackTrace();
-			}/*finally{
-				if(connection != null){
-					try {
-						connection.logout();
-					} catch (ConnectionException e) {
-						logger.error("Error in Releasing Connection : "+e.getMessage());
-						e.printStackTrace();
-					}
+		}catch(Exception e){
+			logger.error("Error in updating CurrencyType : "+e.getMessage());
+			e.printStackTrace();
+			
+			throw e;
+		}/*finally{
+			if(connection != null){
+				try {
+					connection.logout();
+				} catch (ConnectionException e) {
+					logger.error("Error in Releasing Connection : "+e.getMessage());
+					e.printStackTrace();
 				}
-			}*/
-		}
+			}
+		}*/
 		
 		logger.info("Leaving - com.arris.sfdc.soap.provider.CurrencyTypeSoapProvider.updateCurrencyType(InputElement) - outputElement : "+outputElement);
 		return outputElement;
