@@ -13,21 +13,23 @@ import com.sforce.soap.enterprise.sobject.SObject;
 public class AttachmentCreateServiceProvider {
 	Logger logger = Logger.getLogger(AttachmentCreateServiceProvider.class);
 	
-	public OutputElement attachmentCreate(InputElement inputElement){
+	public OutputElement attachmentCreate(InputElement inputElement) throws Exception {
 		logger.info("Entering - com.arris.sfdc.service.provider.AttachmentCreateServiceProvider.attachmentCreate(InputElement) : "+inputElement);
 		
 		OutputElement outputElement = new OutputElement();
-		
-		EnterpriseConnection connection = SFDCConnection.getEnterpriseConnection();
-		if(connection != null){
-			try{
+		try{
+			EnterpriseConnection connection = SFDCConnection.getEnterpriseConnection();
+			if(connection != null){
+			
 				SObject sObject[] = new SObject[1];
+				
 				Attachment attachment = new Attachment();
 				attachment.setParentId(inputElement.getParentId());
 				attachment.setName(inputElement.getName());
 				attachment.setBody(inputElement.getBody().getBytes());
 								
 				sObject[0] = attachment;
+				
 				SaveResult saveResult[] = connection.create(sObject);
 				if(saveResult != null){
 					for(int i = 0; i < saveResult.length; i++){
@@ -49,20 +51,21 @@ public class AttachmentCreateServiceProvider {
 						
 					}
 				}
-			}catch(Exception e){
-				logger.error("Error in creating Object in Attachment Object : "+e.getMessage());
-				e.printStackTrace();
-			}/*finally{
-				if(connection != null){
-					try {
-						connection.logout();
-					} catch (ConnectionException e) {
-						logger.error("Error in Releaseing Connection : "+e.getMessage());
-						e.printStackTrace();
-					}
+			}
+		}catch(Exception e){
+			logger.error("Error in creating Object in Attachment Object : "+e.getMessage());
+			e.printStackTrace();
+			throw e;
+		}/*finally{
+			if(connection != null){
+				try {
+					connection.logout();
+				} catch (ConnectionException e) {
+					logger.error("Error in Releaseing Connection : "+e.getMessage());
+					e.printStackTrace();
 				}
-			}*/
-		}
+			}
+		}*/
 		
 		logger.info("Leaving - com.arris.sfdc.service.provider.AttachmentCreateServiceProvider.attachmentCreate(InputElement) - outputElement : "+outputElement);
 		return outputElement;
