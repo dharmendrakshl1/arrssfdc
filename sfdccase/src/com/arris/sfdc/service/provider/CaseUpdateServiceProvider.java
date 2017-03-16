@@ -13,14 +13,15 @@ import com.sforce.soap.enterprise.sobject.SObject;
 public class CaseUpdateServiceProvider {
 	Logger logger = Logger.getLogger(CaseUpdateServiceProvider.class);
 	
-	public OutputElement caseUpdate(InputElement inputElement){
+	public OutputElement caseUpdate(InputElement inputElement)throws Exception {
 		logger.info("Entering - com.arris.sfdc.service.provider.CaseUpdateServiceProvider.caseUpdate(InputElement) : "+inputElement);
 		
 		OutputElement outputElement = new OutputElement();
 		
-		EnterpriseConnection connection = SFDCConnection.getEnterpriseConnection();
-		if(connection != null){
-			try{
+		try{
+			EnterpriseConnection connection = SFDCConnection.getEnterpriseConnection();
+			if(connection != null){
+			
 				SObject sObject[] = new SObject[1];
 				Case case1 = new Case();
 				case1.setId(inputElement.getId());
@@ -49,20 +50,21 @@ public class CaseUpdateServiceProvider {
 						
 					}
 				}
-			}catch(Exception e){
-				logger.error("Error in Updating Object in Case Object : "+e.getMessage());
-				e.printStackTrace();
-			}/*finally{
-				if(connection != null){
-					try {
-						connection.logout();
-					} catch (ConnectionException e) {
-						logger.error("Error in Releaseing Connection : "+e.getMessage());
-						e.printStackTrace();
-					}
+			}
+		}catch(Exception e){
+			logger.error("Error in Updating Object in Case Object : "+e.getMessage());
+			e.printStackTrace();
+			throw e;
+		}/*finally{
+			if(connection != null){
+				try {
+					connection.logout();
+				} catch (ConnectionException e) {
+					logger.error("Error in Releaseing Connection : "+e.getMessage());
+					e.printStackTrace();
 				}
-			}*/
-		}
+			}
+		}*/
 		
 		logger.info("Leaving - com.arris.sfdc.service.provider.CaseUpdateServiceProvider.caseUpdate(InputElement) - outputElement : "+outputElement);
 		return outputElement;
