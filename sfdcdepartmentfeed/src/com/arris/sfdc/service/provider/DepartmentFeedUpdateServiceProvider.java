@@ -15,15 +15,16 @@ import com.sforce.soap.enterprise.sobject.Departments__c;
 public class DepartmentFeedUpdateServiceProvider {
 	Logger logger = Logger.getLogger(DepartmentFeedUpdateServiceProvider.class);
 	
-	public UpdateOutput departmentFeedUpdate(UpdateDeptInput updateDeptInput){
+	public UpdateOutput departmentFeedUpdate(UpdateDeptInput updateDeptInput) throws Exception{
 		logger.info("Entering - com.arris.sfdc.service.provider.DepartmentFeedUpdateServiceProvider.departmentFeedUpdate(UpdateDeptInput) : "+updateDeptInput);
 		
 		UpdateOutput updateOutput = new UpdateOutput();
 		List<com.arris.sfdc.pojo.UpdateOutput.Results> results = updateOutput.getResults();
-				
-		EnterpriseConnection connection = SFDCConnection.getEnterpriseConnection();
-		if(connection != null){
-			try{
+		
+		try{
+			EnterpriseConnection connection = SFDCConnection.getEnterpriseConnection();
+			if(connection != null){
+			
 				List<com.arris.sfdc.pojo.UpdateDeptInput.Inputs> inputsList = updateDeptInput.getInputs();
 				logger.info("inputList Size : "+inputsList.size());
 				
@@ -70,22 +71,24 @@ public class DepartmentFeedUpdateServiceProvider {
 						}
 					}
 				}
-			}catch(Exception e){
-				logger.error("Error in Updating Object in Departments__c Object : "+e.getMessage());
-				e.printStackTrace();
-			}/*finally{
-				if(connection != null){
-					try {
-						logger.info("Session Logging Out... ");
-						connection.logout();
-						logger.info("connection : "+connection);
-					} catch (ConnectionException e) {
-						logger.error("Error in Releaseing Connection : "+e.getMessage());
-						e.printStackTrace();
-					}
+			}
+		}catch(Exception e){
+			logger.error("Error in Updating Object in Departments__c Object : "+e.getMessage());
+			e.printStackTrace();
+			
+			throw e;
+		}/*finally{
+			if(connection != null){
+				try {
+					logger.info("Session Logging Out... ");
+					connection.logout();
+					logger.info("connection : "+connection);
+				} catch (ConnectionException e) {
+					logger.error("Error in Releaseing Connection : "+e.getMessage());
+					e.printStackTrace();
 				}
-			}*/
-		}
+			}
+		}*/
 		
 		logger.info("Leaving - com.arris.sfdc.service.provider.DepartmentFeedUpdateServiceProvider.departmentFeedUpdate(UpdateDeptInput) - updateOutput : "+updateOutput);
 		return updateOutput;

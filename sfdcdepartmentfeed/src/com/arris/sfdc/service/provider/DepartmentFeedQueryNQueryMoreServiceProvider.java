@@ -15,17 +15,17 @@ import com.sforce.soap.enterprise.sobject.SObject;
 public class DepartmentFeedQueryNQueryMoreServiceProvider {
 	Logger logger = Logger.getLogger(DepartmentFeedQueryNQueryMoreServiceProvider.class);
 	
-	public QueryResult departmentFeedQueryNQueryMore(QueryInput queryInput){
+	public QueryResult departmentFeedQueryNQueryMore(QueryInput queryInput) throws Exception {
 		logger.info("Entering - com.arris.sfdc.service.provider.DepartmentFeedQueryNQueryMoreServiceProvider.departmentFeedQueryNQueryMore(QueryInput) : "+queryInput);
 		
 		QueryResult queryResultOutput = new QueryResult();
 		List<DeptIDs> depIDsList = queryResultOutput.getDeptIDs();
 		
 		boolean done = false;
-				
-		EnterpriseConnection connection = SFDCConnection.getEnterpriseConnection();
-		if(connection != null){
-			try{
+		try{		
+			EnterpriseConnection connection = SFDCConnection.getEnterpriseConnection();
+			if(connection != null){
+			
 				String currentLoadDateTime = queryInput.getCurrentLoadDateTime();
 				logger.info("currentLoadDateTime : "+currentLoadDateTime);
 				
@@ -55,23 +55,25 @@ public class DepartmentFeedQueryNQueryMoreServiceProvider {
 						}
 					}
 				}
-				
-			}catch(Exception e){
-				logger.error("Error in Querying Object in Departments__c Object : "+e.getMessage());
-				e.printStackTrace();
-			}/*finally{
-				if(connection != null){
-					try {
-						logger.info("Session Logging Out... ");
-						connection.logout();
-						logger.info("connection : "+connection);
-					} catch (ConnectionException e) {
-						logger.error("Error in Releaseing Connection : "+e.getMessage());
-						e.printStackTrace();
-					}
+			}
+		}catch(Exception e){
+			logger.error("Error in Querying Object in Departments__c Object : "+e.getMessage());
+			e.printStackTrace();
+			
+			throw e;
+		}/*finally{
+			if(connection != null){
+				try {
+					logger.info("Session Logging Out... ");
+					connection.logout();
+					logger.info("connection : "+connection);
+				} catch (ConnectionException e) {
+					logger.error("Error in Releaseing Connection : "+e.getMessage());
+					e.printStackTrace();
 				}
-			}*/
-		}
+			}
+		}*/
+		
 		logger.info("Results Size : "+depIDsList.size());
 		logger.info("Leaving - com.arris.sfdc.service.provider.DepartmentFeedQueryNQueryMoreServiceProvider.departmentFeedQueryNQueryMore(QueryInput) - queryResultOutput : "+queryResultOutput);
 		return queryResultOutput;
