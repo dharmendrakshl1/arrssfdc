@@ -43,6 +43,8 @@ public class PSAQueryService {
 		if(inputProjectAssignments != null){
 			try{
 				outputProjectAssignments = psaQueryServiceProvider.psaQuery(inputProjectAssignments);
+				logger.info("outputProjectAssignments : "+outputProjectAssignments);
+				
 			}catch(LoginFault e){
 				logger.error("LoginFault Error : ERROR_CODE : "+e.getExceptionCode()+", ERROR_MESSAGE : "+e.getExceptionMessage());
 				return Response.status(401).header("statusMessage", "ERROR_CODE : "+e.getExceptionCode()+", ERROR_MESSAGE : "+e.getExceptionMessage()).entity(outputProjectAssignments).build();
