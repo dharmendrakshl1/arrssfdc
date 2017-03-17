@@ -18,7 +18,7 @@ import com.sforce.soap.enterprise.sobject.Load_File__c;
 public class LoadFileCCreateUpdateServiceProvider {
 	Logger logger = Logger.getLogger(LoadFileCCreateUpdateServiceProvider.class);
 	
-	public OutputElement loadFileCCreateOrUpdate(LoadFileCRequest loadFileCRequest){
+	public OutputElement loadFileCCreateOrUpdate(LoadFileCRequest loadFileCRequest) throws Exception{
 		logger.info("Entering - com.arris.sfdc.service.provider.LoadFileCCreateUpdateServiceProvider.loadFileCCreateOrUpdate(LoadFileCRequest) : "+loadFileCRequest);
 		logger.info("Operation : "+loadFileCRequest.getOperation());
 		
@@ -26,53 +26,61 @@ public class LoadFileCCreateUpdateServiceProvider {
 		Load_File__c records[] = new Load_File__c[1];
 		Load_File__c load_File__c = new Load_File__c();
 		
-		if(loadFileCRequest.getOperation().trim().equalsIgnoreCase(LoadFileCOperationConstants.LOAD_FILE_C_OPERATION_CREATE)){
-			logger.info("Entering for Create Operation");
-						
-			load_File__c.setName__c(loadFileCRequest.getNameC());
-			load_File__c.setType__c(loadFileCRequest.getTypeC());
-			load_File__c.setSource__c(loadFileCRequest.getSourceC());
-			load_File__c.setStatus__c(loadFileCRequest.getStatusC());
-			load_File__c.setRecords__c(loadFileCRequest.getRecordsC());
-			load_File__c.setErrors__c(loadFileCRequest.getErrorsC());
-			load_File__c.setSuccesses__c(loadFileCRequest.getSuccessesC());
-			
-			Calendar calendar = new GregorianCalendar(TimeZone.getDefault());
-			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
-			String formatedDate = sdf.format(calendar.getTime());
-			System.out.println("Formated Date : "+formatedDate);
-			
-			load_File__c.setLoad_Time__c(sdf.getCalendar()); //Sample 2017-02-09T04:17:48.495-05:00
-						
-			records[0] = load_File__c;
-			
-			EnterpriseConnection connection = SFDCConnection.getEnterpriseConnection();
-			if(connection != null){
+		String operation = loadFileCRequest.getOperation();
+		logger.info("operation : "+operation);
+		
+		if(operation != null){
+			if(operation.trim().equalsIgnoreCase(LoadFileCOperationConstants.LOAD_FILE_C_OPERATION_CREATE)){
+				logger.info("Entering for Create Operation");
+							
+				load_File__c.setName__c(loadFileCRequest.getNameC());
+				load_File__c.setType__c(loadFileCRequest.getTypeC());
+				load_File__c.setSource__c(loadFileCRequest.getSourceC());
+				load_File__c.setStatus__c(loadFileCRequest.getStatusC());
+				load_File__c.setRecords__c(loadFileCRequest.getRecordsC());
+				load_File__c.setErrors__c(loadFileCRequest.getErrorsC());
+				load_File__c.setSuccesses__c(loadFileCRequest.getSuccessesC());
+				
+				Calendar calendar = new GregorianCalendar(TimeZone.getDefault());
+				SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
+				String formatedDate = sdf.format(calendar.getTime());
+				System.out.println("Formated Date : "+formatedDate);
+				
+				load_File__c.setLoad_Time__c(sdf.getCalendar()); //Sample 2017-02-09T04:17:48.495-05:00
+							
+				records[0] = load_File__c;
+				
 				try{
-					SaveResult saveResult[] = connection.create(records);
-					if(saveResult != null){
-						for(int i = 0; i < saveResult.length; i++){
-							
-							if(saveResult[i].getId() != null){
-								outputElement.setId(saveResult[i].getId());
-							}else{
-								outputElement.setId("");
+					EnterpriseConnection connection = SFDCConnection.getEnterpriseConnection();
+					if(connection != null){
+					
+						SaveResult saveResult[] = connection.create(records);
+						if(saveResult != null){
+							for(int i = 0; i < saveResult.length; i++){
+								
+								if(saveResult[i].getId() != null){
+									outputElement.setId(saveResult[i].getId());
+								}else{
+									outputElement.setId("");
+								}
+								
+								outputElement.setSuccess(String.valueOf(saveResult[i].getSuccess()));
+								
+								if(saveResult[i].getErrors().length > 0){
+									outputElement.setErrors(saveResult[i].getErrors()[0].getMessage());
+								}else{
+									outputElement.setErrors(String.valueOf(false));
+								}
+								logger.info("outputElement : "+outputElement);
+								
 							}
-							
-							outputElement.setSuccess(String.valueOf(saveResult[i].getSuccess()));
-							
-							if(saveResult[i].getErrors().length > 0){
-								outputElement.setErrors(saveResult[i].getErrors()[0].getMessage());
-							}else{
-								outputElement.setErrors(String.valueOf(false));
-							}
-							logger.info("outputElement : "+outputElement);
-							
 						}
 					}
 				}catch(Exception e){
 					logger.error("Error in creating Object in Load_File__c Object : "+e.getMessage());
 					e.printStackTrace();
+					
+					throw e;
 				}/*finally{
 					if(connection != null){
 						try {
@@ -85,50 +93,53 @@ public class LoadFileCCreateUpdateServiceProvider {
 				}*/
 			}
 			
-		}
-		if(loadFileCRequest.getOperation().trim().equalsIgnoreCase(LoadFileCOperationConstants.LOAD_FILE_C_OPERATION_UPDATE)){
-			logger.info("Entering for Update Operation");
-			
-			load_File__c.setId(loadFileCRequest.getId());
-			load_File__c.setStatus__c(loadFileCRequest.getStatusC());
-			load_File__c.setRecords__c(loadFileCRequest.getRecordsC());
-			load_File__c.setErrors__c(loadFileCRequest.getErrorsC());
-			load_File__c.setSuccesses__c(loadFileCRequest.getSuccessesC());
-			
-			Calendar calendar = new GregorianCalendar(TimeZone.getDefault());
-			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
-			String formatedDate = sdf.format(calendar.getTime());
-			System.out.println("Formated Date : "+formatedDate);
-			
-			load_File__c.setLoad_Time__c(sdf.getCalendar()); //Sample 2017-02-09T04:17:48.495-05:00
-			
-			records[0] = load_File__c;
-			
-			EnterpriseConnection connection = SFDCConnection.getEnterpriseConnection();
-			if(connection != null){
+			if(operation.trim().equalsIgnoreCase(LoadFileCOperationConstants.LOAD_FILE_C_OPERATION_UPDATE)){
+				logger.info("Entering for Update Operation");
+				
+				load_File__c.setId(loadFileCRequest.getId());
+				load_File__c.setStatus__c(loadFileCRequest.getStatusC());
+				load_File__c.setRecords__c(loadFileCRequest.getRecordsC());
+				load_File__c.setErrors__c(loadFileCRequest.getErrorsC());
+				load_File__c.setSuccesses__c(loadFileCRequest.getSuccessesC());
+				
+				Calendar calendar = new GregorianCalendar(TimeZone.getDefault());
+				SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
+				String formatedDate = sdf.format(calendar.getTime());
+				System.out.println("Formated Date : "+formatedDate);
+				
+				load_File__c.setLoad_Time__c(sdf.getCalendar()); //Sample 2017-02-09T04:17:48.495-05:00
+				
+				records[0] = load_File__c;
+				
 				try{
-					SaveResult saveResult[] = connection.update(records);
-					if(saveResult != null){
-						for(int i = 0; i < saveResult.length; i++){
-							
-							if(saveResult[i].getId() != null){
-								outputElement.setId(saveResult[i].getId());
-							}else{
-								outputElement.setId(loadFileCRequest.getId());
+					EnterpriseConnection connection = SFDCConnection.getEnterpriseConnection();
+					if(connection != null){
+					
+						SaveResult saveResult[] = connection.update(records);
+						if(saveResult != null){
+							for(int i = 0; i < saveResult.length; i++){
+								
+								if(saveResult[i].getId() != null){
+									outputElement.setId(saveResult[i].getId());
+								}else{
+									outputElement.setId(loadFileCRequest.getId());
+								}
+								outputElement.setSuccess(String.valueOf(saveResult[i].getSuccess()));
+								
+								if(saveResult[i].getErrors().length > 0){
+									outputElement.setErrors(saveResult[i].getErrors()[0].getMessage());
+								}else{
+									outputElement.setErrors(String.valueOf(false));
+								}
+								logger.info("outputElement : "+outputElement);
 							}
-							outputElement.setSuccess(String.valueOf(saveResult[i].getSuccess()));
-							
-							if(saveResult[i].getErrors().length > 0){
-								outputElement.setErrors(saveResult[i].getErrors()[0].getMessage());
-							}else{
-								outputElement.setErrors(String.valueOf(false));
-							}
-							logger.info("outputElement : "+outputElement);
 						}
 					}
 				}catch(Exception e){
 					logger.error("Error in creating Object in Load_File__c Object : "+e.getMessage());
 					e.printStackTrace();
+					
+					throw e;
 				}/*finally{
 					if(connection != null){
 						try {
