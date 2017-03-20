@@ -22,15 +22,16 @@ import com.sforce.soap.enterprise.sobject.Pse__Time_Period__c;
 public class PSAInDirectExpensesCreateServiceProvider {
 	Logger logger = Logger.getLogger(PSAInDirectExpensesCreateServiceProvider.class);
 	
-	public OutputElement psaInDirectExpensesCreate(InputElement inputElement){
+	public OutputElement psaInDirectExpensesCreate(InputElement inputElement) throws Exception{
 		logger.info("Entering - com.arris.sfdc.service.provider.PSAInDirectExpensesCreateServiceProvider.psaInDirectExpensesCreate(InputElement) : "+inputElement);
 		
 		OutputElement outputElement = new OutputElement();
 		List<CreateResults> createResults = outputElement.getCreateResults();
-				
-		EnterpriseConnection connection = SFDCConnection.getEnterpriseConnection();
-		if(connection != null){
-			try{
+		
+		try{
+			EnterpriseConnection connection = SFDCConnection.getEnterpriseConnection();
+			if(connection != null){
+			
 				List<PseMiscellaneousAdjustmentC> listPseMiscellaneousAdjustmentC = inputElement.getPseMiscellaneousAdjustmentC();
 				logger.info("listPSAExpenses Size : "+listPseMiscellaneousAdjustmentC.size());
 				
@@ -48,25 +49,42 @@ public class PSAInDirectExpensesCreateServiceProvider {
 					pmac.setSource_Type__c(pseMiscellaneousAdjustmentC.getSourceTypeC());
 					
 					SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+					Date formattedDate = null;
 					
-					Date formattedDate = sdf.parse(pseMiscellaneousAdjustmentC.getPseEffectiveDateC().trim());
-					logger.info("Formatted Date For EffectiveDateC : "+formattedDate);
-					pmac.setPse__Effective_Date__c(sdf.getCalendar());
+					String pseEffectiveDateC = pseMiscellaneousAdjustmentC.getPseEffectiveDateC();
+					if(pseEffectiveDateC != null && pseEffectiveDateC.length() != 0){
+						formattedDate = sdf.parse(pseEffectiveDateC.trim());
+						logger.info("Formatted Date For EffectiveDateC : "+formattedDate);
+						pmac.setPse__Effective_Date__c(sdf.getCalendar());
+					}
 					
-					formattedDate = sdf.parse(pseMiscellaneousAdjustmentC.getEffectiveDateIntegrationC().trim());
-					logger.info("Formatted Date For EffectiveDateIntegrationC : "+formattedDate);
-					pmac.setEffective_Date_Integration__c(sdf.getCalendar());
+					String effectiveDateIntegrationC = pseMiscellaneousAdjustmentC.getEffectiveDateIntegrationC();
+					if(effectiveDateIntegrationC != null && effectiveDateIntegrationC.length() != 0){
+						formattedDate = null;
+						formattedDate = sdf.parse(effectiveDateIntegrationC.trim());
+						logger.info("Formatted Date For EffectiveDateIntegrationC : "+formattedDate);
+						pmac.setEffective_Date_Integration__c(sdf.getCalendar());
+					}
 					
 					pmac.setPO_Number__c(pseMiscellaneousAdjustmentC.getPONumberC());
 					pmac.setPse__Description__c(pseMiscellaneousAdjustmentC.getPseDescriptionC());
 					pmac.setPse__Invoice_Number__c(pseMiscellaneousAdjustmentC.getPseInvoiceNumberC());
 					
-					formattedDate = sdf.parse(pseMiscellaneousAdjustmentC.getPseInvoiceDateC().trim());
-					logger.info("Formatted Date For PseInvoiceDateC : "+formattedDate);
-					pmac.setPse__Invoice_Date__c(sdf.getCalendar());
+					String pseInvoiceDateC = pseMiscellaneousAdjustmentC.getPseInvoiceDateC();
+					if(pseInvoiceDateC != null && pseInvoiceDateC.length() != 0){
+						formattedDate = null;
+						formattedDate = sdf.parse(pseInvoiceDateC.trim());
+						logger.info("Formatted Date For PseInvoiceDateC : "+formattedDate);
+						pmac.setPse__Invoice_Date__c(sdf.getCalendar());
+					}
 					
 					pmac.setCurrencyIsoCode(pseMiscellaneousAdjustmentC.getCurrencyIsoCode());
-					pmac.setPse__Amount__c(Double.parseDouble(pseMiscellaneousAdjustmentC.getPseAmountC()));
+					
+					String pseAmountC = pseMiscellaneousAdjustmentC.getPseAmountC();
+					if(pseAmountC != null && pseAmountC.length() != 0){
+						pmac.setPse__Amount__c(Double.parseDouble(pseAmountC.trim()));
+					}
+					
 					pmac.setName(pseMiscellaneousAdjustmentC.getName());
 					pmac.setPse__Status__c(pseMiscellaneousAdjustmentC.getPseStatusC());
 					pmac.setPse__Approved__c(Boolean.parseBoolean(pseMiscellaneousAdjustmentC.getPseApprovedC()));
@@ -123,22 +141,24 @@ public class PSAInDirectExpensesCreateServiceProvider {
 					}
 				}
 				
-			}catch(Exception e){
-				logger.error("Error in Creating Object in Pse__Miscellaneous_Adjustment__c Object : "+e.getMessage());
-				e.printStackTrace();
-			}/*finally{
-				if(connection != null){
-					try {
-						logger.info("Session Logging Out... ");
-						connection.logout();
-						logger.info("connection : "+connection);
-					} catch (ConnectionException e) {
-						logger.error("Error in Releaseing Connection : "+e.getMessage());
-						e.printStackTrace();
-					}
+			}
+		}catch(Exception e){
+			logger.error("Error in Creating Object in Pse__Miscellaneous_Adjustment__c Object : "+e.getMessage());
+			e.printStackTrace();
+			
+			throw e;
+		}/*finally{
+			if(connection != null){
+				try {
+					logger.info("Session Logging Out... ");
+					connection.logout();
+					logger.info("connection : "+connection);
+				} catch (ConnectionException e) {
+					logger.error("Error in Releaseing Connection : "+e.getMessage());
+					e.printStackTrace();
 				}
-			}*/
-		}
+			}
+		}*/
 		
 		logger.info("Leaving - com.arris.sfdc.service.provider.PSAInDirectExpensesCreateServiceProvider.psaInDirectExpensesCreate(InputElement) - outputElement : "+outputElement);
 		return outputElement;
