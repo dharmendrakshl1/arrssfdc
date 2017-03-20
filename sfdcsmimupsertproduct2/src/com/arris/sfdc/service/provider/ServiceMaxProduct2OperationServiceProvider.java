@@ -15,15 +15,16 @@ import com.sforce.soap.enterprise.sobject.Product2;
 public class ServiceMaxProduct2OperationServiceProvider {
 	Logger logger = Logger.getLogger(ServiceMaxProduct2OperationServiceProvider.class);
 	
-	public UpsertProduct2Output performProdcut2Operation(UpsertProduct2Input input){
+	public UpsertProduct2Output performProdcut2Operation(UpsertProduct2Input input) throws Exception{
 		logger.info("Entering - com.arris.sfdc.service.provider.ServiceMaxProduct2OperationServiceProvider.performProdcutOperation(UpsertProduct2Input) : "+input);
 		
 		UpsertProduct2Output upsertProduct2Output = new UpsertProduct2Output();
 		
 		if(input != null){
-			EnterpriseConnection connection = SFDCConnection.getEnterpriseConnection();
-			if(connection != null){
-				try{
+			try{
+				EnterpriseConnection connection = SFDCConnection.getEnterpriseConnection();
+				if(connection != null){
+				
 					Product2 records[] = new Product2[1];
 					
 					Product2 record = new Product2();
@@ -117,17 +118,23 @@ public class ServiceMaxProduct2OperationServiceProvider {
 							logger.info("upsertProduct2Output : "+upsertProduct2Output);
 						}
 					}
-				}catch(NumberFormatException e){
-					logger.error("Error in Converting to Number : "+e.getMessage());
-					e.printStackTrace();
 				}
-				catch(ParseException e){
-					logger.error("Error in Parsing : "+e.getMessage());
-					e.printStackTrace();
-				}catch(Exception e){
-					logger.error("Error in performing Operation : "+e.getMessage());
-					e.printStackTrace();
-				}
+			}catch(NumberFormatException e){
+				logger.error("Error in Converting to Number : "+e.getMessage());
+				e.printStackTrace();
+				
+				throw e;
+			}
+			catch(ParseException e){
+				logger.error("Error in Parsing : "+e.getMessage());
+				e.printStackTrace();
+				
+				throw e;
+			}catch(Exception e){
+				logger.error("Error in performing Operation : "+e.getMessage());
+				e.printStackTrace();
+				
+				throw e;
 			}
 		}
 		logger.info("Leaving - com.arris.sfdc.service.provider.ServiceMaxProduct2OperationServiceProvider.performProdcutOperation(UpsertProduct2Input) - upsertProductOutput : "+upsertProduct2Output);
