@@ -17,7 +17,7 @@ import com.sforce.soap.enterprise.EnterpriseConnection;
 public class ServiceMaxPriceBookOperationServiceProvider {
 	Logger logger = Logger.getLogger(ServiceMaxPriceBookOperationServiceProvider.class);
 	
-	public PriceBookOutput performPriceBookOperation(PriceBookInput priceBookInput){
+	public PriceBookOutput performPriceBookOperation(PriceBookInput priceBookInput) throws Exception {
 		logger.info("Entering - com.arris.sfdc.service.provider.ServiceMaxPriceBookOperationServiceProvider.performPriceBookOperation(PriceBookInput) : "+priceBookInput);
 		
 		String operation = priceBookInput.getOperation().trim();
@@ -26,9 +26,10 @@ public class ServiceMaxPriceBookOperationServiceProvider {
 		PriceBookOutput priceBookOutput = new PriceBookOutput();
 		
 		if(operation != null){
-			EnterpriseConnection connection = SFDCConnection.getEnterpriseConnection();
-			if(connection != null){
-				try{
+			try{
+				EnterpriseConnection connection = SFDCConnection.getEnterpriseConnection();
+				if(connection != null){
+				
 					if(operation.equalsIgnoreCase(ServiceMaxPriceBookOperationConstants.CREATE_PRICE_BOOK_ENTRY)){
 						logger.info("ServiceMaxPriceBookOperationConstants.CREATE_PRICE_BOOK_ENTRY condition Matched");
 						
@@ -64,11 +65,12 @@ public class ServiceMaxPriceBookOperationServiceProvider {
 						}
 						logger.info("priceBookOutput : "+priceBookOutput);
 					}
-					
-				}catch(Exception e){
-					logger.error("Error in performing Operation : "+e.getMessage());
-					e.printStackTrace();
 				}
+			}catch(Exception e){
+				logger.error("Error in performing Operation : "+e.getMessage());
+				e.printStackTrace();
+				
+				throw e;
 			}
 		}
 		logger.info("Leaving - com.arris.sfdc.service.provider.ServiceMaxPriceBookOperationServiceProvider.performPriceBookOperation(PriceBookInput) - priceBookOutput : "+priceBookOutput);

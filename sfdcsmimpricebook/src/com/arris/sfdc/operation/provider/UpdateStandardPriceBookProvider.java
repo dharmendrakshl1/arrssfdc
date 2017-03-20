@@ -49,7 +49,7 @@ public class UpdateStandardPriceBookProvider {
 				if(saveResult[i].getId() != null){
 					output.setId(saveResult[i].getId());
 				}else{
-					output.setId("");
+					output.setId(input.getId());
 				}
 				
 				output.setSuccess(String.valueOf(saveResult[i].getSuccess()));
