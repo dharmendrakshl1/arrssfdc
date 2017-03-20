@@ -43,6 +43,8 @@ public class ServiceMaxPriceBookOperationService {
 		if(priceBookInput != null){
 			try{
 				priceBookOutput = serviceMaxPriceBookOperationServiceProvider.performPriceBookOperation(priceBookInput);
+				logger.info("priceBookOutput : "+priceBookOutput);
+				
 			}catch(LoginFault e){
 				logger.error("LoginFault Error : ERROR_CODE : "+e.getExceptionCode()+", ERROR_MESSAGE : "+e.getExceptionMessage());
 				return Response.status(401).header("statusMessage", "ERROR_CODE : "+e.getExceptionCode()+", ERROR_MESSAGE : "+e.getExceptionMessage()).entity(priceBookOutput).build();
