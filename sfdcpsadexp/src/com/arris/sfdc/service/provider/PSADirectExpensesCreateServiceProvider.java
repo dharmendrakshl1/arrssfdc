@@ -20,15 +20,16 @@ import com.sforce.soap.enterprise.sobject.Pse__Proj__c;
 public class PSADirectExpensesCreateServiceProvider {
 	Logger logger = Logger.getLogger(PSADirectExpensesCreateServiceProvider.class);
 	
-	public OutputElement psaDirectExpensesCreate(InputElement inputElement){
+	public OutputElement psaDirectExpensesCreate(InputElement inputElement) throws Exception{
 		logger.info("Entering - com.arris.sfdc.service.provider.PSADirectExpensesCreateServiceProvider.psaDirectExpensesCreate(InputElement) : "+inputElement);
 		
 		OutputElement outputElement = new OutputElement();
 		List<Results> results = outputElement.getResults();
-				
-		EnterpriseConnection connection = SFDCConnection.getEnterpriseConnection();
-		if(connection != null){
-			try{
+		
+		try{
+			EnterpriseConnection connection = SFDCConnection.getEnterpriseConnection();
+			if(connection != null){
+			
 				List<PSAExpenses> listPSAExpenses = inputElement.getPSAExpenses();
 				logger.info("listPSAExpenses Size : "+listPSAExpenses.size());
 				
@@ -49,21 +50,30 @@ public class PSADirectExpensesCreateServiceProvider {
 					
 					pse__Expense__c.setEmployee_ID__c(psaExpenses.getEmployeeIDC());
 					
-					SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-					Date formattedDate = sdf.parse(psaExpenses.getPseExpenseDateC().trim());
-					logger.info("Formatted Date : "+formattedDate);
-					
-					pse__Expense__c.setPse__Expense_Date__c(sdf.getCalendar());
+					String pseExpenseDateC = psaExpenses.getPseExpenseDateC();
+					if(pseExpenseDateC != null && pseExpenseDateC.trim().length() != 0){
+						SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+						Date formattedDate = sdf.parse(pseExpenseDateC.trim());
+						logger.info("Formatted Date : "+formattedDate);
+						pse__Expense__c.setPse__Expense_Date__c(sdf.getCalendar());
+					}
 					
 					pse__Expense__c.setPse__Type__c(psaExpenses.getPseTypeC());
-					pse__Expense__c.setPse__Amount__c(Double.parseDouble(psaExpenses.getPseAmountC()));
+					
+					String pseAmountC = psaExpenses.getPseAmountC();
+					if(pseAmountC != null && pseAmountC.trim().length() != 0){
+						pse__Expense__c.setPse__Amount__c(Double.parseDouble(pseAmountC.trim()));
+					}
+					
 					pse__Expense__c.setCurrencyIsoCode(psaExpenses.getCurrencyIsoCode());
 					pse__Expense__c.setPS_Expense_Id__c(psaExpenses.getPSExpenseIdC());
 					pse__Expense__c.setPse__Status__c(psaExpenses.getPseStatusC());
+					
 					pse__Expense__c.setPse__Include_In_Financials__c(Boolean.parseBoolean(psaExpenses.getPseIncludeInFinancialsC()));
 					pse__Expense__c.setPse__Approved__c(Boolean.parseBoolean(psaExpenses.getPseApprovedC()));
 					pse__Expense__c.setPse__Billable__c(Boolean.parseBoolean(psaExpenses.getPseBillableC()));
 					pse__Expense__c.setIs_Integration_Updated__c(Boolean.parseBoolean(psaExpenses.getIsIntegrationUpdatedC()));
+					
 					pse__Expense__c.setExternal_Report_Name__c(psaExpenses.getExternalReportNameC());
 					
 					records[i] = pse__Expense__c;
@@ -99,22 +109,24 @@ public class PSADirectExpensesCreateServiceProvider {
 					}
 				}
 				
-			}catch(Exception e){
-				logger.error("Error in Creating Object in pse__Expense__c Object : "+e.getMessage());
-				e.printStackTrace();
-			}/*finally{
-				if(connection != null){
-					try {
-						logger.info("Session Logging Out... ");
-						connection.logout();
-						logger.info("connection : "+connection);
-					} catch (ConnectionException e) {
-						logger.error("Error in Releaseing Connection : "+e.getMessage());
-						e.printStackTrace();
-					}
+			}
+		}catch(Exception e){
+			logger.error("Error in Creating Object in pse__Expense__c Object : "+e.getMessage());
+			e.printStackTrace();
+			
+			throw e;
+		}/*finally{
+			if(connection != null){
+				try {
+					logger.info("Session Logging Out... ");
+					connection.logout();
+					logger.info("connection : "+connection);
+				} catch (ConnectionException e) {
+					logger.error("Error in Releaseing Connection : "+e.getMessage());
+					e.printStackTrace();
 				}
-			}*/
-		}
+			}
+		}*/
 		
 		logger.info("Leaving - com.arris.sfdc.service.provider.PSADirectExpensesCreateServiceProvider.psaDirectExpensesCreate(InputElement) - outputElement : "+outputElement);
 		return outputElement;

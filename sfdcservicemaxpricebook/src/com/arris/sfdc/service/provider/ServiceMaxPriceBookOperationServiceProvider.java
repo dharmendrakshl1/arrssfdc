@@ -29,7 +29,7 @@ import com.sforce.ws.ConnectionException;
 public class ServiceMaxPriceBookOperationServiceProvider {
 	Logger logger = Logger.getLogger(ServiceMaxPriceBookOperationServiceProvider.class);
 	
-	public PriceBookOutput maxPriceBookOperation(PriceBookInput priceBookInput){
+	public PriceBookOutput maxPriceBookOperation(PriceBookInput priceBookInput) throws Exception{
 		logger.info("Entering - com.arris.sfdc.service.provider.ServiceMaxPriceBookOperationServiceProvider.maxPriceBookOperation(PriceBookInput) : "+priceBookInput);
 		
 		String operation = priceBookInput.getOperation().trim();
@@ -38,9 +38,10 @@ public class ServiceMaxPriceBookOperationServiceProvider {
 		PriceBookOutput priceBookOutput = new PriceBookOutput();
 		
 		if(operation != null){
-			EnterpriseConnection connection = SFDCConnection.getEnterpriseConnection();
-			if(connection != null){
-				try{
+			try{
+				EnterpriseConnection connection = SFDCConnection.getEnterpriseConnection();
+				if(connection != null){
+				
 					if(operation.equalsIgnoreCase(ServiceMaxPriceBookOperationConstants.QUERY_PRODUCT2)){
 						logger.info("ServiceMaxPriceBookOperationConstants.QUERY_PRODUCT2 condition Matched");
 						
@@ -100,10 +101,12 @@ public class ServiceMaxPriceBookOperationServiceProvider {
 						}
 						logger.info("priceBookOutput : "+priceBookOutput);
 					}
-				}catch(Exception e){
-					logger.error("Error in performing Operation : "+e.getMessage());
-					e.printStackTrace();
 				}
+			}catch(Exception e){
+				logger.error("Error in performing Operation : "+e.getMessage());
+				e.printStackTrace();
+				
+				throw e;
 			}
 		}
 		logger.info("Leaving - com.arris.sfdc.service.provider.ServiceMaxPriceBookOperationServiceProvider.maxPriceBookOperation(PriceBookInput) - priceBookOutput : "+priceBookOutput);
@@ -216,7 +219,12 @@ public class ServiceMaxPriceBookOperationServiceProvider {
 		
 		Price_List_Line__c pllc = new Price_List_Line__c();
 		pllc.setCurrencyIsoCode(upsertPriceListInput.getCurrencyIsoCode());
-		pllc.setUnit_Price__c(Double.valueOf(upsertPriceListInput.getUnitPriceC()));
+		
+		String unitPriceC = upsertPriceListInput.getUnitPriceC();
+		if(unitPriceC != null && unitPriceC.length() != 0){
+			pllc.setUnit_Price__c(Double.parseDouble(unitPriceC.trim()));
+		}
+		
 		pllc.setProduct__c(upsertPriceListInput.getProductC());
 		pllc.setName(upsertPriceListInput.getName());
 		pllc.setExternal_ID__c(upsertPriceListInput.getExternalIDC());

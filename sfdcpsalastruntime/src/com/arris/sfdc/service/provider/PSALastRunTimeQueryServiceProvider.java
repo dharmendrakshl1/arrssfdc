@@ -16,14 +16,15 @@ import com.sforce.soap.enterprise.sobject.SObject;
 public class PSALastRunTimeQueryServiceProvider {
 	Logger logger = Logger.getLogger(PSALastRunTimeQueryServiceProvider.class);
 	
-	public OutputElement psaLastRunTimeQuery(InputElement inputElement){
+	public OutputElement psaLastRunTimeQuery(InputElement inputElement) throws Exception{
 		logger.info("Entering - com.arris.sfdc.service.provider.PSALastRunTimeQueryServiceProvider.psaLastRunTimeQuery(InputElement) : "+inputElement);
 		
 		OutputElement outputElement = new OutputElement();
-				
-		EnterpriseConnection connection = SFDCConnection.getEnterpriseConnection();
-		if(connection != null){
-			try{
+		
+		try{
+			EnterpriseConnection connection = SFDCConnection.getEnterpriseConnection();
+			if(connection != null){
+			
 				String name = inputElement.getName();
 				logger.info("Name = "+name);
 				QueryResult queryResult = connection.query("select Load_Time__c from Load_File__c where Name__c = '"+name+"' order by Load_Time__c desc limit 1");
@@ -41,22 +42,24 @@ public class PSALastRunTimeQueryServiceProvider {
 					}
 				}
 				
-			}catch(Exception e){
-				logger.error("Error in Querying Object from Load_File__c Object : "+e.getMessage());
-				e.printStackTrace();
-			}/*finally{
-				if(connection != null){
-					try {
-						logger.info("Session Logging Out... ");
-						connection.logout();
-						logger.info("connection : "+connection);
-					} catch (ConnectionException e) {
-						logger.error("Error in Releaseing Connection : "+e.getMessage());
-						e.printStackTrace();
-					}
+			}
+		}catch(Exception e){
+			logger.error("Error in Querying Object from Load_File__c Object : "+e.getMessage());
+			e.printStackTrace();
+			
+			throw e;
+		}/*finally{
+			if(connection != null){
+				try {
+					logger.info("Session Logging Out... ");
+					connection.logout();
+					logger.info("connection : "+connection);
+				} catch (ConnectionException e) {
+					logger.error("Error in Releaseing Connection : "+e.getMessage());
+					e.printStackTrace();
 				}
-			}*/
-		}
+			}
+		}*/
 		
 		logger.info("Leaving - com.arris.sfdc.service.provider.PSALastRunTimeQueryServiceProvider.psaLastRunTimeQuery(InputElement) - outputElement : "+outputElement);
 		return outputElement;

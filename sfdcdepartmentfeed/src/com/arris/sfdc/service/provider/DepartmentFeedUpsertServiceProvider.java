@@ -17,15 +17,16 @@ import com.sforce.soap.enterprise.sobject.Departments__c;
 public class DepartmentFeedUpsertServiceProvider {
 	Logger logger = Logger.getLogger(DepartmentFeedUpsertServiceProvider.class);
 	
-	public UpsertOutput departmentFeedUpsert(UpsertDepts upsertDepts){
+	public UpsertOutput departmentFeedUpsert(UpsertDepts upsertDepts)throws Exception {
 		logger.info("Entering - com.arris.sfdc.service.provider.DepartmentFeedUpsertServiceProvider.departmentFeedUpsert(UpsertDepts) : "+upsertDepts);
 		
 		UpsertOutput upsertOutput = new UpsertOutput();
 		List<Results> results = upsertOutput.getResults();
-				
-		EnterpriseConnection connection = SFDCConnection.getEnterpriseConnection();
-		if(connection != null){
-			try{
+		
+		try{
+			EnterpriseConnection connection = SFDCConnection.getEnterpriseConnection();
+			if(connection != null){
+			
 				List<Inputs> inputsList = upsertDepts.getInputs();
 				logger.info("inputList Size : "+inputsList.size());
 				
@@ -77,22 +78,24 @@ public class DepartmentFeedUpsertServiceProvider {
 						}
 					}
 				}
-			}catch(Exception e){
-				logger.error("Error in Upserting Object in Departments__c Object : "+e.getMessage());
-				e.printStackTrace();
-			}/*finally{
-				if(connection != null){
-					try {
-						logger.info("Session Logging Out... ");
-						connection.logout();
-						logger.info("connection : "+connection);
-					} catch (ConnectionException e) {
-						logger.error("Error in Releaseing Connection : "+e.getMessage());
-						e.printStackTrace();
-					}
+			}
+		}catch(Exception e){
+			logger.error("Error in Upserting Object in Departments__c Object : "+e.getMessage());
+			e.printStackTrace();
+			
+			throw e;
+		}/*finally{
+			if(connection != null){
+				try {
+					logger.info("Session Logging Out... ");
+					connection.logout();
+					logger.info("connection : "+connection);
+				} catch (ConnectionException e) {
+					logger.error("Error in Releaseing Connection : "+e.getMessage());
+					e.printStackTrace();
 				}
-			}*/
-		}
+			}
+		}*/
 		
 		logger.info("Leaving - com.arris.sfdc.service.provider.DepartmentFeedUpsertServiceProvider.departmentFeedUpsert(UpsertDepts) - upsertOutput : "+upsertOutput);
 		return upsertOutput;

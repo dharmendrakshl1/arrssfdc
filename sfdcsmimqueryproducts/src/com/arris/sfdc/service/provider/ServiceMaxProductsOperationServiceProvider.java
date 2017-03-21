@@ -25,7 +25,7 @@ import com.sforce.soap.enterprise.EnterpriseConnection;
 public class ServiceMaxProductsOperationServiceProvider {
 	Logger logger = Logger.getLogger(ServiceMaxProductsOperationServiceProvider.class);
 	
-	public QueryProductOutput performProdcutOperation(QueryProductInput queryProductInput){
+	public QueryProductOutput performProdcutOperation(QueryProductInput queryProductInput) throws Exception{
 		logger.info("Entering - com.arris.sfdc.service.provider.ServiceMaxProductsOperationServiceProvider.performProdcutOperation(QueryProductInput) : "+queryProductInput);
 		
 		String operation = queryProductInput.getOperation().trim();
@@ -34,9 +34,10 @@ public class ServiceMaxProductsOperationServiceProvider {
 		QueryProductOutput queryProductOutput = new QueryProductOutput();
 		
 		if(operation != null){
-			EnterpriseConnection connection = SFDCConnection.getEnterpriseConnection();
-			if(connection != null){
-				try{
+			try{
+				EnterpriseConnection connection = SFDCConnection.getEnterpriseConnection();
+				if(connection != null){
+				
 					if(operation.equalsIgnoreCase(ServiceMaxProductsOperationConstants.QUERY_APC)){
 						logger.info("ServiceMaxPriceBookOperationConstants.QUERY_APC condition Matched");
 						
@@ -121,10 +122,12 @@ public class ServiceMaxProductsOperationServiceProvider {
 						logger.info("queryProductOutput : "+queryProductOutput);
 					}
 					
-				}catch(Exception e){
-					logger.error("Error in performing Operation : "+e.getMessage());
-					e.printStackTrace();
 				}
+			}catch(Exception e){
+				logger.error("Error in performing Operation : "+e.getMessage());
+				e.printStackTrace();
+				
+				throw e;
 			}
 		}
 		logger.info("Leaving - com.arris.sfdc.service.provider.ServiceMaxProductsOperationServiceProvider.performProdcutOperation(QueryProductInput) - queryProductOutput : "+queryProductOutput);
