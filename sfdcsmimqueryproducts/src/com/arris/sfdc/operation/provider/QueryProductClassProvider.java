@@ -26,7 +26,7 @@ public class QueryProductClassProvider {
 			queryProductOutput.setQueryProductClassOutput(output);
 		}
 		
-		String nameC = input.getNameC().trim();
+		String nameC = input.getNameC();
 		logger.info("nameC : "+nameC);
 				
 		QueryResult queryResult = connection.query("select Id from Product_Class__c where Name__c = '"+nameC+"'");

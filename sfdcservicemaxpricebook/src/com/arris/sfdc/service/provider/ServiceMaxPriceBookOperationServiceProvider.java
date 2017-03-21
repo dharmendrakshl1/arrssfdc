@@ -221,7 +221,7 @@ public class ServiceMaxPriceBookOperationServiceProvider {
 		pllc.setCurrencyIsoCode(upsertPriceListInput.getCurrencyIsoCode());
 		
 		String unitPriceC = upsertPriceListInput.getUnitPriceC();
-		if(unitPriceC != null && unitPriceC.length() != 0){
+		if(unitPriceC != null && unitPriceC.trim().length() != 0){
 			pllc.setUnit_Price__c(Double.parseDouble(unitPriceC.trim()));
 		}
 		

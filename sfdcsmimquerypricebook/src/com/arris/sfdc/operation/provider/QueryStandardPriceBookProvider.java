@@ -26,7 +26,7 @@ public class QueryStandardPriceBookProvider {
 			queryPriceBookOutput.setStandardPriceBookOutput(output);
 		}
 		
-		String optionalInput = input.getOptionalInput().trim();
+		String optionalInput = input.getOptionalInput();
 		logger.info("optionalInput : "+optionalInput);
 		
 		QueryResult queryResult = connection.query("select Id from Pricebook2 where isStandard = true");

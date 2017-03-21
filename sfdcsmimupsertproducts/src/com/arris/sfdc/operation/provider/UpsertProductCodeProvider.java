@@ -25,7 +25,7 @@ public class UpsertProductCodeProvider {
 			upsertProductOutput.setUpsertProductCodeOutput(output);
 		}
 		
-		String nameC = input.getNameC().trim();
+		String nameC = input.getNameC();
 		logger.info("nameC : "+nameC);
 		
 		String name = input.getName();

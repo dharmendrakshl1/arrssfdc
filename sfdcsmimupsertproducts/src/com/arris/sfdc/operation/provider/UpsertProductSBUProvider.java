@@ -25,7 +25,7 @@ public class UpsertProductSBUProvider {
 			upsertProductOutput.setUpsertProductSBUOutput(output);
 		}
 		
-		String nameC = input.getNameC().trim();
+		String nameC = input.getNameC();
 		logger.info("nameC : "+nameC);
 		
 		Product_SBU__c records[] = new Product_SBU__c[1];

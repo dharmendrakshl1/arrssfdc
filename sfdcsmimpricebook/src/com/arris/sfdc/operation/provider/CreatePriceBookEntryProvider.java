@@ -31,16 +31,16 @@ public class CreatePriceBookEntryProvider {
 		record.setCurrencyIsoCode(input.getCurrencyIsoCode());
 		
 		String isActive = input.getIsActive();
-		if(isActive != null && isActive.length() != 0){
-			record.setIsActive(Boolean.parseBoolean(input.getIsActive()));
+		if(isActive != null && isActive.trim().length() != 0){
+			record.setIsActive(Boolean.parseBoolean(isActive.trim()));
 		}
 		
 		record.setPricebook2Id(input.getPricebook2Id());
 		record.setProduct2Id(input.getProduct2Id());
 		
 		String unitPrice = input.getUnitPrice();
-		if(unitPrice != null && unitPrice.length() != 0){
-			record.setUnitPrice(Double.valueOf(unitPrice));
+		if(unitPrice != null && unitPrice.trim().length() != 0){
+			record.setUnitPrice(Double.valueOf(unitPrice.trim()));
 		}
 		
 		records[0] = record;

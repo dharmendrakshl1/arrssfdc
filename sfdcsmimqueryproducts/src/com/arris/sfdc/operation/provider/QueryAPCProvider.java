@@ -26,10 +26,10 @@ public class QueryAPCProvider {
 			queryProductOutput.setQueryAPCOutput(queryAPCOutput);
 		}
 		
-		String nameC = queryAPCInput.getNameC().trim();
+		String nameC = queryAPCInput.getNameC();
 		logger.info("nameC : "+nameC);
 		
-		String descriptionC = queryAPCInput.getDescriptionC().trim();
+		String descriptionC = queryAPCInput.getDescriptionC();
 		logger.info("descriptionC : "+descriptionC);
 		
 		QueryResult queryResult = connection.query("select Id from Product_APC__c where Name__c = '"+nameC+"' and Description__c = '"+descriptionC+"'");

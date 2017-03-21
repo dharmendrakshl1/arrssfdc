@@ -52,14 +52,14 @@ public class PSAInDirectExpensesCreateServiceProvider {
 					Date formattedDate = null;
 					
 					String pseEffectiveDateC = pseMiscellaneousAdjustmentC.getPseEffectiveDateC();
-					if(pseEffectiveDateC != null && pseEffectiveDateC.length() != 0){
+					if(pseEffectiveDateC != null && pseEffectiveDateC.trim().length() != 0){
 						formattedDate = sdf.parse(pseEffectiveDateC.trim());
 						logger.info("Formatted Date For EffectiveDateC : "+formattedDate);
 						pmac.setPse__Effective_Date__c(sdf.getCalendar());
 					}
 					
 					String effectiveDateIntegrationC = pseMiscellaneousAdjustmentC.getEffectiveDateIntegrationC();
-					if(effectiveDateIntegrationC != null && effectiveDateIntegrationC.length() != 0){
+					if(effectiveDateIntegrationC != null && effectiveDateIntegrationC.trim().length() != 0){
 						formattedDate = null;
 						formattedDate = sdf.parse(effectiveDateIntegrationC.trim());
 						logger.info("Formatted Date For EffectiveDateIntegrationC : "+formattedDate);
@@ -71,7 +71,7 @@ public class PSAInDirectExpensesCreateServiceProvider {
 					pmac.setPse__Invoice_Number__c(pseMiscellaneousAdjustmentC.getPseInvoiceNumberC());
 					
 					String pseInvoiceDateC = pseMiscellaneousAdjustmentC.getPseInvoiceDateC();
-					if(pseInvoiceDateC != null && pseInvoiceDateC.length() != 0){
+					if(pseInvoiceDateC != null && pseInvoiceDateC.trim().length() != 0){
 						formattedDate = null;
 						formattedDate = sdf.parse(pseInvoiceDateC.trim());
 						logger.info("Formatted Date For PseInvoiceDateC : "+formattedDate);
@@ -81,7 +81,7 @@ public class PSAInDirectExpensesCreateServiceProvider {
 					pmac.setCurrencyIsoCode(pseMiscellaneousAdjustmentC.getCurrencyIsoCode());
 					
 					String pseAmountC = pseMiscellaneousAdjustmentC.getPseAmountC();
-					if(pseAmountC != null && pseAmountC.length() != 0){
+					if(pseAmountC != null && pseAmountC.trim().length() != 0){
 						pmac.setPse__Amount__c(Double.parseDouble(pseAmountC.trim()));
 					}
 					

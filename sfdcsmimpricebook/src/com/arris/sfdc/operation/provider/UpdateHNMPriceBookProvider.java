@@ -31,8 +31,8 @@ public class UpdateHNMPriceBookProvider {
 		record.setId(input.getId());
 		
 		String unitPrice = input.getUnitPrice();
-		if(unitPrice != null && unitPrice.length() != 0){
-			record.setUnitPrice(Double.valueOf(unitPrice));
+		if(unitPrice != null && unitPrice.trim().length() != 0){
+			record.setUnitPrice(Double.valueOf(unitPrice.trim()));
 		}
 		
 		records[0] = record;

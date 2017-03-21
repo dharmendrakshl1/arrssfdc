@@ -33,8 +33,8 @@ public class ServiceMaxProduct2OperationServiceProvider {
 					record.setBigMachines_Part_Number__c(input.getBigMachinesPartNumberC());
 					
 					String cumulativeLeadTimeC = input.getCumulativeLeadTimeC();
-					if(cumulativeLeadTimeC != null && cumulativeLeadTimeC.length() != 0){
-						record.setCumulative_Lead_Time__c(Double.valueOf(cumulativeLeadTimeC));
+					if(cumulativeLeadTimeC != null && cumulativeLeadTimeC.trim().length() != 0){
+						record.setCumulative_Lead_Time__c(Double.valueOf(cumulativeLeadTimeC.trim()));
 					}
 					
 					record.setDefault_Shipping_Org__c(input.getDefaultShippingOrgC());
@@ -43,23 +43,23 @@ public class ServiceMaxProduct2OperationServiceProvider {
 					record.setECCN__c(input.getECCNC());
 					
 					String frozenCostC = input.getFrozenCostC();
-					if(frozenCostC != null && frozenCostC.length() != 0){
-						record.setFrozen_Cost__c(Double.valueOf(frozenCostC));
+					if(frozenCostC != null && frozenCostC.trim().length() != 0){
+						record.setFrozen_Cost__c(Double.valueOf(frozenCostC.trim()));
 					}
 					
 					String integrationInScopeC = input.getIntegrationInScopeC();
-					if(integrationInScopeC != null && integrationInScopeC.length() != 0){
-						record.setIntegration_In_Scope__c(Boolean.valueOf(integrationInScopeC));
+					if(integrationInScopeC != null && integrationInScopeC.trim().length() != 0){
+						record.setIntegration_In_Scope__c(Boolean.valueOf(integrationInScopeC.trim()));
 					}
 					
 					String isActive = input.getIsActive();
-					if(isActive != null && isActive.length() != 0){
-						record.setIsActive(Boolean.valueOf(isActive));
+					if(isActive != null && isActive.trim().length() != 0){
+						record.setIsActive(Boolean.valueOf(isActive.trim()));
 					}
 					
 					String minSalePriceC = input.getMinSalePriceC();
-					if(minSalePriceC != null && minSalePriceC.length() != 0){
-						record.setMin_Sale_Price__c(Double.valueOf(minSalePriceC));
+					if(minSalePriceC != null && minSalePriceC.trim().length() != 0){
+						record.setMin_Sale_Price__c(Double.valueOf(minSalePriceC.trim()));
 					}
 					
 					record.setModel__c(input.getModelC());
@@ -67,8 +67,8 @@ public class ServiceMaxProduct2OperationServiceProvider {
 					
 					SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 					String obsoleteDateC = input.getObsoleteDateC();
-					if(obsoleteDateC != null && obsoleteDateC.length() > 0){
-						sdf.parse(obsoleteDateC);
+					if(obsoleteDateC != null && obsoleteDateC.trim().length() > 0){
+						sdf.parse(obsoleteDateC.trim());
 						record.setObsolete_Date__c(sdf.getCalendar());
 					}
 					
@@ -93,8 +93,8 @@ public class ServiceMaxProduct2OperationServiceProvider {
 					record.setWeight__c(input.getWeightC());
 					
 					String standardPackC = input.getStandardPackC();
-					if(standardPackC != null && standardPackC.length() != 0){
-						record.setStandard_pack__c(Double.valueOf(standardPackC));
+					if(standardPackC != null && standardPackC.trim().length() != 0){
+						record.setStandard_pack__c(Double.valueOf(standardPackC.trim()));
 					}
 					
 					records[0] = record;

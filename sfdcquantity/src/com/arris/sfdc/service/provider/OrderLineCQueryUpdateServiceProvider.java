@@ -91,14 +91,14 @@ public class OrderLineCQueryUpdateServiceProvider {
 							order_Line__c.setExternal_ID__c(inputs.getExternalIDC());
 							
 							String availableQuantityC = inputs.getAvailableQuantityC();
-							if(availableQuantityC != null && availableQuantityC.length() != 0){
+							if(availableQuantityC != null && availableQuantityC.trim().length() != 0){
 								order_Line__c.setAvailable_Quantity__c(Double.parseDouble(availableQuantityC.trim()));
 							}
 							
 							order_Line__c.setId(inputs.getId());
 							
 							String onHandQuantityC = inputs.getOnhandQuantityC();
-							if(onHandQuantityC != null && onHandQuantityC.length() != 0){
+							if(onHandQuantityC != null && onHandQuantityC.trim().length() != 0){
 								order_Line__c.setOnhand_Quantity__c(Double.parseDouble(onHandQuantityC.trim()));
 							}
 													

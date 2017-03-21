@@ -25,7 +25,7 @@ public class UpsertProductFamilyProvider {
 			upsertProductOutput.setUpsertProductFamilyOutput(output);
 		}
 		
-		String nameC = input.getNameC().trim();
+		String nameC = input.getNameC();
 		logger.info("nameC : "+nameC);
 		
 		Product_Family__c records[] = new Product_Family__c[1];

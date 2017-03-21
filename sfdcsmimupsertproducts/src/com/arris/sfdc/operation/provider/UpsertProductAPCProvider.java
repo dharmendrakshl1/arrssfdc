@@ -25,10 +25,10 @@ public class UpsertProductAPCProvider {
 			upsertProductOutput.setUpsertProductAPCOutput(upsertProductAPCOutput);
 		}
 		
-		String nameC = upsertProductAPCInput.getNameC().trim();
+		String nameC = upsertProductAPCInput.getNameC();
 		logger.info("nameC : "+nameC);
 		
-		String descriptionC = upsertProductAPCInput.getDescriptionC().trim();
+		String descriptionC = upsertProductAPCInput.getDescriptionC();
 		logger.info("descriptionC : "+descriptionC);
 		
 		Product_APC__c records[] = new Product_APC__c[1];

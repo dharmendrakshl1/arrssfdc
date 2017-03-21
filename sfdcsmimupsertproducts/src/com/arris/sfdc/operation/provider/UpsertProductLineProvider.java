@@ -25,7 +25,7 @@ public class UpsertProductLineProvider {
 			upsertProductOutput.setUpsertProductLineOutput(output);
 		}
 		
-		String nameC = input.getNameC().trim();
+		String nameC = input.getNameC();
 		logger.info("nameC : "+nameC);
 		
 		Product_Line__c records[] = new Product_Line__c[1];

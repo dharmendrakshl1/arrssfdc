@@ -25,7 +25,7 @@ public class UpsertProductTechnologyProvider {
 			upsertProductOutput.setUpsertProductTechnologyOutput(output);
 		}
 		
-		String nameC = input.getNameC().trim();
+		String nameC = input.getNameC();
 		logger.info("nameC : "+nameC);
 		
 		Product_Technology__c records[] = new Product_Technology__c[1];
