@@ -28,7 +28,7 @@ import com.sforce.ws.ConnectionException;
 public class VMIOrderOperationServiceProvider {
 	Logger logger = Logger.getLogger(VMIOrderOperationServiceProvider.class);
 	
-	public OrderImportOutput vmiOrderOperation(OrderImportInput orderImportInput){
+	public OrderImportOutput vmiOrderOperation(OrderImportInput orderImportInput) throws Exception {
 		logger.info("Entering - com.arris.sfdc.service.provider.VMIOrderOperationServiceProvider.vmiOrderOperation(OrderImportInput) : "+orderImportInput);
 		
 		String operation = orderImportInput.getOperation().trim();
@@ -37,9 +37,10 @@ public class VMIOrderOperationServiceProvider {
 		OrderImportOutput orderImportOutput = new OrderImportOutput();
 		
 		if(operation != null){
-			EnterpriseConnection connection = SFDCConnection.getEnterpriseConnection();
-			if(connection != null){
-				try{
+			try{
+				EnterpriseConnection connection = SFDCConnection.getEnterpriseConnection();
+				if(connection != null){
+				
 					if(operation.equalsIgnoreCase(VMIOrderOperationConstants.VMI_ORDER_OPERATION_QUERY_NEW_POs)){
 						logger.info("VMIOrderOperationConstants.VMI_ORDER_OPERATION_QUERY_NEW_POs condition Matched");
 						
@@ -69,10 +70,12 @@ public class VMIOrderOperationServiceProvider {
 						orderImportOutput = performUpdateInterfaceStatus(connection, updateInterfaceStatusInput);
 						logger.info("orderImportOutput : "+orderImportOutput);
 					}
-				}catch(Exception e){
-					logger.error("Error in performing Operation : "+e.getMessage());
-					e.printStackTrace();
 				}
+			}catch(Exception e){
+				logger.error("Error in performing Operation : "+e.getMessage());
+				e.printStackTrace();
+				
+				throw e;
 			}
 		}
 		logger.info("Leaving - com.arris.sfdc.service.provider.VMIOrderOperationServiceProvider.vmiOrderOperation(OrderImportInput) - orderImportOutput : "+orderImportOutput);
@@ -94,22 +97,39 @@ public class VMIOrderOperationServiceProvider {
 		
 		String interfaceStatusC = queryPONumberInput.getInterfaceStatusC();
 		logger.info("interfaceStatusC : "+interfaceStatusC);
-		if(interfaceStatusC != null && !(interfaceStatusC.length() > 0)){
+		if(interfaceStatusC != null && !(interfaceStatusC.trim().length() > 0)){
 			interfaceStatusC = "New";
 		}
 		logger.info("after If Check interfaceStatusC : "+interfaceStatusC);
+		
+		boolean done = false;
 		
 		QueryResult queryResult = connection.query("select PO_Number__c from Order_Staging__c where Interface_Status__c = '"+interfaceStatusC+"'");
 		//QueryResult queryResult = connection.query("select PO_Number__c from Order_Staging__c");
 		if(queryResult != null){
 			logger.info("queryResult Size : "+queryResult.getSize());
+			logger.info("queryResult getRecords Size : "+queryResult.getRecords().length);
 			
-			for(SObject sObject : queryResult.getRecords()){
-				Order_Staging__c order_Staging__c = (Order_Staging__c) sObject;
-				
-				listPoNumberC.add(order_Staging__c.getPO_Number__c());
-				logger.info("PO_Number__c : "+order_Staging__c.getPO_Number__c());
+			if(queryResult.getSize() > 0){
+				while(!done){
+					for(SObject sObject : queryResult.getRecords()){
+						Order_Staging__c order_Staging__c = (Order_Staging__c) sObject;
+						
+						listPoNumberC.add(order_Staging__c.getPO_Number__c());
+						
+						logger.info("PO_Number__c : "+order_Staging__c.getPO_Number__c());
+					}
+					
+					if(queryResult.isDone()){
+						logger.info("Query is Done !!!!");
+						done = true;
+					}else{
+						logger.info("Query Results Has More Records.... ");
+						queryResult = connection.queryMore(queryResult.getQueryLocator());
+					}
+				}
 			}
+			
 			logger.info("listPoNumberC : "+listPoNumberC);
 		}
 		
