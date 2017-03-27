@@ -41,5 +41,10 @@ public class InitProperty {
 	
 	 return bundle;
 	}
+	
+	public static String getPropertyFilePath(String propertyType) 
+	{
+		return FILE_Path+"/"+ApplicationProperties.getInstance().getAppProperty(propertyType);
+	}
 }
 

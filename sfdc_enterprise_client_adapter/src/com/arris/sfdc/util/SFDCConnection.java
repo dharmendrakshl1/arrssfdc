@@ -1,7 +1,17 @@
 package com.arris.sfdc.util;
 
+import java.io.File;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.PropertyResourceBundle;
 
+import org.apache.commons.configuration2.Configuration;
+import org.apache.commons.configuration2.FileBasedConfiguration;
+import org.apache.commons.configuration2.PropertiesConfiguration;
+import org.apache.commons.configuration2.builder.FileBasedConfigurationBuilder;
+import org.apache.commons.configuration2.builder.fluent.Parameters;
+import org.apache.commons.configuration2.convert.DefaultListDelimiterHandler;
 import org.apache.log4j.Logger;
 
 import com.sforce.soap.enterprise.Connector;
@@ -19,7 +29,7 @@ import com.sforce.soap.enterprise.fault.LoginFault;
 import com.sforce.soap.enterprise.fault.MalformedQueryFault;
 import com.sforce.soap.enterprise.fault.MalformedSearchFault;
 import com.sforce.soap.enterprise.fault.UnexpectedErrorFault;
-import com.sforce.soap.enterprise.sobject.Order_Staging__c;
+import com.sforce.soap.enterprise.sobject.Account;
 import com.sforce.ws.ConnectionException;
 import com.sforce.ws.ConnectorConfig;
 import com.sforce.ws.SoapFaultException;
@@ -28,24 +38,87 @@ public class SFDCConnection {
 	private static EnterpriseConnection connection = null;
 	private static ConnectorConfig config = null;
 	private static PropertyResourceBundle bundle = null;
+	private static String sessionId = null;
+	private static String serviceEndpoint = null;
 	
 	private static Logger logger = Logger.getLogger(SFDCConnection.class);
 	
-	public static EnterpriseConnection getEnterpriseConnection() throws Exception{
+	private static DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+	
+	public static synchronized EnterpriseConnection getEnterpriseConnection() throws Exception{
 		logger.info("Entering - com.arris.sfdc.util.SFDCConnection.getEnterpriseConnection() ");
 		try{
 			bundle = InitProperty.getProperty("arrisSFDC.properties");
+			
+			sessionId = bundle.getString("session_id");
+			logger.info("sessionID : "+sessionId);
+			
+			serviceEndpoint = bundle.getString("service_endpoint");
+			logger.info("serviceEndpoint : "+serviceEndpoint);
+			
+			config = new ConnectorConfig();
+			config.setSessionId(sessionId);
+			config.setServiceEndpoint(serviceEndpoint);
+			
+			connection = Connector.newConnection(config);
+			logger.info("Successfully Established connection with SFDC : "+connection);
+			
+			Date logginDateTime = connection.getServerTimestamp().getTimestamp().getTime();
+			logger.info("logginDateTime : "+logginDateTime);
+			System.out.println("logginDateTime : "+logginDateTime);
+			
+		}catch(UnexpectedErrorFault e){
+			System.out.println("ERRRORORORORORR");
+			
+			logger.error("UnexpectedErrorFault Exception : Error Code : "+e.getExceptionCode()+", Exception Message : "+e.getExceptionMessage());
+			config.setSessionId(null);
+			
 			String userName = bundle.getString("username");
 			logger.info("User Name : "+userName);
 			String password = bundle.getString("password");
 			
-			config = new ConnectorConfig();
+			String authEndpoint = bundle.getString("auth_endpoint");
+			logger.info("authEndpoint : "+authEndpoint);
+			
 			config.setUsername(userName);
 			config.setPassword(password);
+			config.setAuthEndpoint(authEndpoint);
+			config.setServiceEndpoint(authEndpoint);
+			
 			connection = Connector.newConnection(config);
 			logger.info("Successfully Established connection with SFDC : "+connection);
-		}
-		catch(Exception e){
+			logger.info("New Session ID : "+config.getSessionId());
+			System.out.println("NEW SESSION ID : "+config.getSessionId());
+			
+			File file = new File(InitProperty.getPropertyFilePath("arrisSFDC.properties"));
+			
+			/*FileInputStream fis = new FileInputStream(file);
+			Properties props = new Properties();
+			props.load(fis);
+			fis.close();
+			
+			FileOutputStream fos = new FileOutputStream(file);
+			props.setProperty("session_id", config.getSessionId());
+			props.store(fos, null);
+			fos.close();*/
+			
+			Parameters parameters = new Parameters();
+			FileBasedConfigurationBuilder<FileBasedConfiguration> builder = new FileBasedConfigurationBuilder<FileBasedConfiguration>(PropertiesConfiguration.class)
+					.configure(parameters.properties().
+							setFile(file)
+							.setListDelimiterHandler(new DefaultListDelimiterHandler(',')));
+							
+			Configuration configuration = builder.getConfiguration();
+			
+			configuration.setProperty("session_id", config.getSessionId());
+			
+			String formatDate = df.format(connection.getServerTimestamp().getTimestamp().getTime());
+			System.out.println("Formated Date : "+formatDate);
+			configuration.setProperty("sessionID_generated_dateTime", formatDate);
+			
+			builder.save();
+			
+		}catch(Exception e){
 			connection = null;
 			logger.error("Error in creating connection with SFDC : "+e);
 			throw e;
@@ -59,11 +132,10 @@ public class SFDCConnection {
 		EnterpriseConnection conn = null;
 		try {
 			conn = getEnterpriseConnection();
-			QueryResult results = conn.query("select PO_Number__c, Interface_Status__c from Order_Staging__c");
+			QueryResult results = conn.query("select Id from Account where id = '001a000001fOhq0AAC'");
 			for(com.sforce.soap.enterprise.sobject.SObject record : results.getRecords()){
-				Order_Staging__c lfc = (Order_Staging__c) record;
-				System.out.println("PO_Number__c : "+lfc.getPO_Number__c());
-				System.out.println("Interface_Status__c : "+lfc.getInterface_Status__c());
+				Account account = (Account) record;
+				System.out.println("ID : "+account.getId());
 				System.out.println("=======================================================");
 			}
 		}catch(LoginFault e){
