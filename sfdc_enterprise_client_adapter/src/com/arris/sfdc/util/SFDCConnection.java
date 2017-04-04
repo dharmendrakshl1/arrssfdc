@@ -1,6 +1,12 @@
 package com.arris.sfdc.util;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -41,11 +47,23 @@ public class SFDCConnection {
 	private static String sessionId = null;
 	private static String serviceEndpoint = null;
 	
+	private static URL url = null;
+	private static HttpURLConnection httpURLConnection = null;
+	
 	private static Logger logger = Logger.getLogger(SFDCConnection.class);
 	
 	private static DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
 	
-	public static synchronized EnterpriseConnection getEnterpriseConnection() throws Exception{
+	static
+	{
+		bundle = InitProperty.getProperty("arrisSFDC.properties");
+	}
+	
+	private SFDCConnection(){
+		
+	}
+	
+	/*public static synchronized EnterpriseConnection getEnterpriseConnection() throws Exception{
 		logger.info("Entering - com.arris.sfdc.util.SFDCConnection.getEnterpriseConnection() ");
 		try{
 			bundle = InitProperty.getProperty("arrisSFDC.properties");
@@ -65,10 +83,8 @@ public class SFDCConnection {
 			
 			Date logginDateTime = connection.getServerTimestamp().getTimestamp().getTime();
 			logger.info("logginDateTime : "+logginDateTime);
-			System.out.println("logginDateTime : "+logginDateTime);
 			
 		}catch(UnexpectedErrorFault e){
-			System.out.println("ERRRORORORORORR");
 			
 			logger.error("UnexpectedErrorFault Exception : Error Code : "+e.getExceptionCode()+", Exception Message : "+e.getExceptionMessage());
 			config.setSessionId(null);
@@ -88,19 +104,8 @@ public class SFDCConnection {
 			connection = Connector.newConnection(config);
 			logger.info("Successfully Established connection with SFDC : "+connection);
 			logger.info("New Session ID : "+config.getSessionId());
-			System.out.println("NEW SESSION ID : "+config.getSessionId());
 			
 			File file = new File(InitProperty.getPropertyFilePath("arrisSFDC.properties"));
-			
-			/*FileInputStream fis = new FileInputStream(file);
-			Properties props = new Properties();
-			props.load(fis);
-			fis.close();
-			
-			FileOutputStream fos = new FileOutputStream(file);
-			props.setProperty("session_id", config.getSessionId());
-			props.store(fos, null);
-			fos.close();*/
 			
 			Parameters parameters = new Parameters();
 			FileBasedConfigurationBuilder<FileBasedConfiguration> builder = new FileBasedConfigurationBuilder<FileBasedConfiguration>(PropertiesConfiguration.class)
@@ -113,7 +118,6 @@ public class SFDCConnection {
 			configuration.setProperty("session_id", config.getSessionId());
 			
 			String formatDate = df.format(connection.getServerTimestamp().getTimestamp().getTime());
-			System.out.println("Formated Date : "+formatDate);
 			configuration.setProperty("sessionID_generated_dateTime", formatDate);
 			
 			builder.save();
@@ -126,6 +130,138 @@ public class SFDCConnection {
 		
 		logger.info("Leaving - com.arris.sfdc.util.SFDCConnection.getEnterpriseConnection() : Connection -  "+connection);
 		return connection;
+	}*/
+	
+	public static synchronized EnterpriseConnection getEnterpriseConnection() throws Exception{
+		logger.info("Entering - com.arris.sfdc.util.SFDCConnection.getEnterpriseConnection() ");
+		try{
+			
+            sessionId = getSessionId();
+            logger.info("sessionId : "+sessionId);
+            
+			serviceEndpoint = bundle.getString("service_endpoint");
+			logger.info("serviceEndpoint : "+serviceEndpoint);
+			
+			config = new ConnectorConfig();
+			config.setSessionId(sessionId);
+			config.setServiceEndpoint(serviceEndpoint);
+			
+			connection = Connector.newConnection(config);
+			logger.info("Successfully Established connection with SFDC : "+connection);
+			
+			Date logginDateTime = connection.getServerTimestamp().getTimestamp().getTime();
+			logger.info("logginDateTime : "+logginDateTime);
+			
+		}catch(UnexpectedErrorFault e){
+			
+			logger.error("UnexpectedErrorFault Exception : Error Code : "+e.getExceptionCode()+", Exception Message : "+e.getExceptionMessage());
+			config.setSessionId(null);
+			
+			String userName = bundle.getString("username");
+			logger.info("User Name : "+userName);
+			String password = bundle.getString("password");
+			
+			String authEndpoint = bundle.getString("auth_endpoint");
+			logger.info("authEndpoint : "+authEndpoint);
+			
+			config.setUsername(userName);
+			config.setPassword(password);
+			config.setAuthEndpoint(authEndpoint);
+			config.setServiceEndpoint(authEndpoint);
+			
+			connection = Connector.newConnection(config);
+			logger.info("Successfully Established Fresh connection with SFDC : "+connection);
+			
+			logger.info("New Session ID : "+config.getSessionId());
+			
+			String formatDate = df.format(connection.getServerTimestamp().getTimestamp().getTime());
+			logger.info("formatDate : "+formatDate);
+			
+			String response = storeSessionId(config.getSessionId(), formatDate);
+			logger.info("response : "+response);
+			
+		}catch(Exception e){
+			connection = null;
+			logger.error("Error in creating connection with SFDC : "+e);
+			throw e;
+		}
+		
+		logger.info("Leaving - com.arris.sfdc.util.SFDCConnection.getEnterpriseConnection() : Connection -  "+connection);
+		return connection;
+	}
+	
+	public static String getSessionId() throws Exception{
+		logger.info("Entering - getSessionID()");
+		
+		String getSessionIdURL = bundle.getString("getSessionIdURL");
+		logger.info("getSessionIdURL : "+getSessionIdURL);
+		
+		url = new URL(getSessionIdURL);
+		logger.info("Get Session ID URL : "+url.getHost());
+		System.out.println("Get Session ID URL : "+url.getHost());
+		
+		httpURLConnection = (HttpURLConnection) url.openConnection();
+		httpURLConnection.setRequestMethod("GET");
+		
+		if(httpURLConnection.getResponseCode() != HttpURLConnection.HTTP_CREATED && !(httpURLConnection.getResponseCode() == HttpURLConnection.HTTP_OK))
+		{
+			logger.info("Request URL: "+httpURLConnection.getURL());
+			logger.info("Response Code = "+httpURLConnection.getResponseCode());
+			logger.info("Response Message = "+httpURLConnection.getResponseMessage());
+        	
+			throw new RuntimeException("Failed: Http Error Code : "+httpURLConnection.getResponseCode()+" : "+httpURLConnection.getResponseMessage());
+		}
+		
+		StringBuffer sb = new StringBuffer();
+        InputStream in = (InputStream)httpURLConnection.getInputStream();
+        BufferedReader br = new BufferedReader (new InputStreamReader (in));
+        String line;
+        while ((line = br.readLine()) != null) {
+            sb.append(line);
+        }
+        
+        logger.info("Leaving - getSessionID()");
+		return sb.toString();
+	}
+	
+	public static String storeSessionId(String sessionId, String formatDate) throws Exception{
+		logger.info("Entering - storeSessionId(String sessionId)");
+		
+		String storeSessionIdURL = bundle.getString("storeSessionIdURL");
+		logger.info("storeSessionIdURL : "+storeSessionIdURL);
+		
+		url = new URL(storeSessionIdURL);
+		httpURLConnection = (HttpURLConnection) url.openConnection();
+		httpURLConnection.setRequestMethod("POST");
+		httpURLConnection.setDoOutput(true);
+		httpURLConnection.setRequestProperty("Content-Type", "application/json");
+		
+		String content = "{\"sessionId\":\""+sessionId+"\",\"sessionIdGeneratedDateTime\":\""+formatDate+"\"}";
+		logger.info("content : "+content);
+		
+		OutputStream os = httpURLConnection.getOutputStream();
+		os.write(content.getBytes("UTF-8"));
+		os.flush();
+		
+		if(httpURLConnection.getResponseCode() != HttpURLConnection.HTTP_CREATED && !(httpURLConnection.getResponseCode() == HttpURLConnection.HTTP_OK))
+		{
+			logger.info("Request URL: "+httpURLConnection.getURL());
+			logger.info("Response Code = "+httpURLConnection.getResponseCode());
+			logger.info("Response Message = "+httpURLConnection.getResponseMessage());
+        	
+			throw new RuntimeException("Failed: Http Error Code : "+httpURLConnection.getResponseCode()+" : "+httpURLConnection.getResponseMessage());
+		}
+		
+		StringBuffer sb = new StringBuffer();
+        InputStream in = (InputStream)httpURLConnection.getInputStream();
+        BufferedReader br = new BufferedReader (new InputStreamReader (in));
+        String line;
+        while ((line = br.readLine()) != null) {
+            sb.append(line);
+        }
+        
+        logger.info("Leaving - storeSessionId(String sessionId)");
+		return sb.toString();
 	}
 	
 	public static void main(String[] args) {
