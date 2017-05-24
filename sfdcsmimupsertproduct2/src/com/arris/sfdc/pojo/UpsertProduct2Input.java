@@ -8,7 +8,6 @@
 
 package com.arris.sfdc.pojo;
 
-import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -103,79 +102,82 @@ import javax.xml.bind.annotation.XmlType;
     "volumeUOMC",
     "weightUOMC",
     "weightC",
-    "standardPackC"
+    "standardPackC",
+    "forecastTypeC"
 })
 @XmlRootElement(name = "UpsertProduct2Input")
 public class UpsertProduct2Input {
 
-    @XmlElement(name = "APC_Surcharge_Type__c", required = false)
+    @XmlElement(name = "APC_Surcharge_Type__c", nillable = true, required = false)
     protected String apcSurchargeTypeC;
-    @XmlElement(name = "BigMachines_Part_Number__c", required = false)
+    @XmlElement(name = "BigMachines_Part_Number__c", nillable = true, required = false)
     protected String bigMachinesPartNumberC;
-    @XmlElement(name = "Cumulative_Lead_Time__c", required = false)
+    @XmlElement(name = "Cumulative_Lead_Time__c", nillable = true, required = false)
     protected String cumulativeLeadTimeC;
-    @XmlElement(name = "Default_Shipping_Org__c", required = false)
+    @XmlElement(name = "Default_Shipping_Org__c", nillable = true, required = false)
     protected String defaultShippingOrgC;
-    @XmlElement(name = "Description", required = false)
+    @XmlElement(name = "Description", nillable = true, required = false)
     protected String description;
-    @XmlElement(name = "Dimensions_UOM__c", required = false)
+    @XmlElement(name = "Dimensions_UOM__c", nillable = true, required = false)
     protected String dimensionsUOMC;
-    @XmlElement(name = "ECCN__c", required = false)
+    @XmlElement(name = "ECCN__c", nillable = true, required = false)
     protected String eccnc;
-    @XmlElement(name = "Frozen_Cost__c", required = false)
+    @XmlElement(name = "Frozen_Cost__c", nillable = true, required = false)
     protected String frozenCostC;
-    @XmlElement(name = "Integration_In_Scope__c", required = false)
+    @XmlElement(name = "Integration_In_Scope__c", nillable = true, required = false)
     protected String integrationInScopeC;
-    @XmlElement(name = "IsActive", required = false)
+    @XmlElement(name = "IsActive", nillable = true, required = false)
     protected String isActive;
-    @XmlElement(name = "Min_Sale_Price__c", required = false)
+    @XmlElement(name = "Min_Sale_Price__c", nillable = true, required = false)
     protected String minSalePriceC;
-    @XmlElement(name = "Model__c", required = false)
+    @XmlElement(name = "Model__c", nillable = true, required = false)
     protected String modelC;
-    @XmlElement(name = "Name", required = false)
+    @XmlElement(name = "Name", nillable = true, required = false)
     protected String name;
-    @XmlElement(name = "Obsolete_Date__c", required = false)
+    @XmlElement(name = "Obsolete_Date__c", nillable = true, required = false)
     protected String obsoleteDateC;
-    @XmlElement(name = "Oracle_Item_Type__c", required = false)
+    @XmlElement(name = "Oracle_Item_Type__c", nillable = true, required = false)
     protected String oracleItemTypeC;
-    @XmlElement(name = "PH_APC__c", required = false)
+    @XmlElement(name = "PH_APC__c", nillable = true, required = false)
     protected String phapcc;
-    @XmlElement(name = "PH_Class__c", required = false)
+    @XmlElement(name = "PH_Class__c", nillable = true, required = false)
     protected String phClassC;
-    @XmlElement(name = "PH_Family__c", required = false)
+    @XmlElement(name = "PH_Family__c", nillable = true, required = false)
     protected String phFamilyC;
-    @XmlElement(name = "PH_Line__c", required = false)
+    @XmlElement(name = "PH_Line__c", nillable = true, required = false)
     protected String phLineC;
-    @XmlElement(name = "PH_Product_Code__c", required = false)
+    @XmlElement(name = "PH_Product_Code__c", nillable = true, required = false)
     protected String phProductCodeC;
-    @XmlElement(name = "PH_SBU__c", required = false)
+    @XmlElement(name = "PH_SBU__c", nillable = true, required = false)
     protected String phsbuc;
-    @XmlElement(name = "PH_Technology__c", required = false)
+    @XmlElement(name = "PH_Technology__c", nillable = true, required = false)
     protected String phTechnologyC;
-    @XmlElement(name = "ProductCode", required = false)
+    @XmlElement(name = "ProductCode", nillable = true, required = false)
     protected String productCode;
-    @XmlElement(name = "Source_System__c", required = false)
+    @XmlElement(name = "Source_System__c", nillable = true, required = false)
     protected String sourceSystemC;
-    @XmlElement(name = "Status__c", required = false)
+    @XmlElement(name = "Status__c", nillable = true, required = false)
     protected String statusC;
-    @XmlElement(name = "Unit_Height__c", required = false)
+    @XmlElement(name = "Unit_Height__c", nillable = true, required = false)
     protected String unitHeightC;
-    @XmlElement(name = "Unit_Length__c", required = false)
+    @XmlElement(name = "Unit_Length__c", nillable = true, required = false)
     protected String unitLengthC;
-    @XmlElement(name = "Unit_Volume__c", required = false)
+    @XmlElement(name = "Unit_Volume__c", nillable = true, required = false)
     protected String unitVolumeC;
-    @XmlElement(name = "Unit_Width__c", required = false)
+    @XmlElement(name = "Unit_Width__c", nillable = true, required = false)
     protected String unitWidthC;
-    @XmlElement(name = "Unit_of_Measure__c", required = false)
+    @XmlElement(name = "Unit_of_Measure__c", nillable = true, required = false)
     protected String unitOfMeasureC;
-    @XmlElement(name = "Volume_UOM__c", required = false)
+    @XmlElement(name = "Volume_UOM__c", nillable = true, required = false)
     protected String volumeUOMC;
-    @XmlElement(name = "Weight_UOM__c", required = false)
+    @XmlElement(name = "Weight_UOM__c", nillable = true, required = false)
     protected String weightUOMC;
-    @XmlElement(name = "Weight__c", required = false)
+    @XmlElement(name = "Weight__c", nillable = true, required = false)
     protected String weightC;
-    @XmlElement(name = "standard_pack__c", required = false)
+    @XmlElement(name = "standard_pack__c", nillable = true, required = false)
     protected String standardPackC;
+    @XmlElement(name = "Forecast_Type__c", nillable = true, required = false)
+    protected String forecastTypeC;
 
     /**
      * Gets the value of the apcSurchargeTypeC property.
@@ -992,5 +994,28 @@ public class UpsertProduct2Input {
     public void setStandardPackC(String value) {
         this.standardPackC = value;
     }
+    
+    /**
+     * Gets the value of the forecastTypeC property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link JAXBElement }{@code <}{@link String }{@code >}
+     *     
+     */
+    public String getForecastTypeC() {
+        return forecastTypeC;
+    }
 
+    /**
+     * Sets the value of the forecastTypeC property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link JAXBElement }{@code <}{@link String }{@code >}
+     *     
+     */
+    public void setForecastTypeC(String value) {
+        this.forecastTypeC = value;
+    }
 }

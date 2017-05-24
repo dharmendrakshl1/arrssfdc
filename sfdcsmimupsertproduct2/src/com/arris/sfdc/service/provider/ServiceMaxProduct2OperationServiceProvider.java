@@ -91,6 +91,7 @@ public class ServiceMaxProduct2OperationServiceProvider {
 					record.setVolume_UOM__c(input.getVolumeUOMC());
 					record.setWeight_UOM__c(input.getWeightUOMC());
 					record.setWeight__c(input.getWeightC());
+					record.setForecast_Type__c(input.getForecastTypeC());
 					
 					String standardPackC = input.getStandardPackC();
 					if(standardPackC != null && standardPackC.trim().length() != 0){
