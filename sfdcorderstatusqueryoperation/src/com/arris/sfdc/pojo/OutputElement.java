@@ -69,7 +69,8 @@ import javax.xml.bind.annotation.XmlType;
     "idAttachment",
     "idNote",
     "idldsfdcLine",
-    "errorMessage"
+    "errorMessage",
+    "idHeaderPSEOpportunityC"
 })
 @XmlRootElement(name = "OutputElement")
 public class OutputElement {
@@ -108,6 +109,8 @@ public class OutputElement {
     protected String idldsfdcLine;
     @XmlElement(name = "ErrorMessage", required = false)
     protected String errorMessage;
+    @XmlElement(name = "ID_Header_pse__Opportunity__c", required = false)
+    protected String idHeaderPSEOpportunityC;
 
     /**
      * Gets the value of the idHeaderQueryBillTo property.
@@ -122,7 +125,25 @@ public class OutputElement {
     }
 
     /**
-     * Sets the value of the idHeaderQueryBillTo property.
+     * Sets the value of the idHeaderPSEOpportunityC property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link JAXBElement }{@code <}{@link String }{@code >}
+     *     
+     */
+    public void setIDHeaderPSEOpportunityC(String value) {
+        this.idHeaderPSEOpportunityC = value;
+    }
+    
+    
+    
+    public String getIDHeaderPSEOpportunityC() {
+        return idHeaderPSEOpportunityC;
+    }
+
+    /**
+     * Sets the value of the idHeaderPSEOpportunityC property.
      * 
      * @param value
      *     allowed object is
@@ -133,6 +154,10 @@ public class OutputElement {
         this.idHeaderQueryBillTo = value;
     }
 
+    
+    
+    
+    
     /**
      * Gets the value of the idHeaderQueryShipTo property.
      * 

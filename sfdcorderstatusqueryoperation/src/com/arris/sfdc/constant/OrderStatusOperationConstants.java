@@ -16,4 +16,8 @@ public interface OrderStatusOperationConstants {
 	public String OrderStatus_OPERATION_QueryAttachment = "queryAttachment";
 	public String OrderStatus_OPERATION_QueryNote = "QueryNote";
 	public String OrderStatus_OPERATION_QueryLineId = "QueryLineId";
+	public String OrderStatus_OPERATION_QueryProject = "queryProject";
+	public String OrderStatus_OPERATION_QueryCorporateContract = "queryCorporateContract";
+
+	
 }

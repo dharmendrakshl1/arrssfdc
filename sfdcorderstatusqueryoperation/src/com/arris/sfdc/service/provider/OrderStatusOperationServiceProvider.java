@@ -10,12 +10,14 @@ import com.sforce.soap.enterprise.QueryResult;
 import com.sforce.soap.enterprise.sobject.Attachment;
 import com.sforce.soap.enterprise.sobject.Bill_To_Ship_To__c;
 import com.sforce.soap.enterprise.sobject.Carrier_Codes__c;
+import com.sforce.soap.enterprise.sobject.Corporate_Contract__c;
 import com.sforce.soap.enterprise.sobject.Note;
 import com.sforce.soap.enterprise.sobject.Offer__c;
 import com.sforce.soap.enterprise.sobject.Opportunity;
 import com.sforce.soap.enterprise.sobject.Order_Header__c;
 import com.sforce.soap.enterprise.sobject.Order_Line__c;
 import com.sforce.soap.enterprise.sobject.Product2;
+import com.sforce.soap.enterprise.sobject.Pse__Proj__c;
 import com.sforce.soap.enterprise.sobject.Quotes__c;
 import com.sforce.soap.enterprise.sobject.SObject;
 import com.sforce.soap.enterprise.sobject.Trials__c;
@@ -77,6 +79,7 @@ public class OrderStatusOperationServiceProvider {
 								"OrderStatusOperationConstants.OrderStatus_OPERATION_QueryTrialwIR condition Matched");
 
 						String headerQueryReplaceOpportunity = orderStatusInput.getHeaderQueryReplaceOpportunity();
+						
 						logger.info("headerQueryReplaceOpportunity : " + headerQueryReplaceOpportunity);
 
 						orderStatusOutput = PerformQueryReplaceOpportunitywIR(connection,
@@ -195,6 +198,30 @@ public class OrderStatusOperationServiceProvider {
 						orderStatusOutput = PerformQueryLineId(connection, ldOrderNumber);
 						logger.info("orderStatusOutput : " + orderStatusOutput);
 					}
+					else if (operation
+							.equalsIgnoreCase(OrderStatusOperationConstants.OrderStatus_OPERATION_QueryCorporateContract)) {
+						logger.info(
+								"OrderStatusOperationConstants.OrderStatus_OPERATION_QueryCorporateContract condition Matched");
+
+						String headerQueryReplaceOpportunity = orderStatusInput.getHeaderQueryReplaceOpportunity();
+
+						logger.info("headerQueryReplaceOpportunity : " + headerQueryReplaceOpportunity);
+
+						orderStatusOutput = PerformQueryCoporateContract(connection, headerQueryReplaceOpportunity);
+						logger.info("orderStatusOutput : " + orderStatusOutput);
+					}
+					else if (operation
+							.equalsIgnoreCase(OrderStatusOperationConstants.OrderStatus_OPERATION_QueryProject)) {
+						logger.info(
+								"OrderStatusOperationConstants.OrderStatus_OPERATION_QueryProject condition Matched");
+
+						String headerQueryReplaceOpportunity = orderStatusInput.getHeaderQueryReplaceOpportunity();
+
+						logger.info("headerQueryReplaceOpportunity : " + headerQueryReplaceOpportunity);
+
+						orderStatusOutput = PerformQueryProject(connection, headerQueryReplaceOpportunity);
+						logger.info("orderStatusOutput : " + orderStatusOutput);
+					}
 
 				}
 			}
@@ -265,12 +292,12 @@ public class OrderStatusOperationServiceProvider {
 			}
 
 		} catch (Exception e) {
-			logger.error("Error in upserting : " + e.getMessage());
+			logger.error("Error in querying : " + e.getMessage());
 			e.printStackTrace();
 		}
 
 		logger.info(
-				"Leaving - com.arris.sfdc.api.rest.CustomerServicePart_Upsert.upsertPartNumber(PartNumberInput approvalInputElement) :  updateOutputElement : "
+				"Leaving - Provider Class"
 						+ orderStatusOutput);
 		return orderStatusOutput;
 
@@ -300,12 +327,12 @@ public class OrderStatusOperationServiceProvider {
 			}
 
 		} catch (Exception e) {
-			logger.error("Error in upserting : " + e.getMessage());
+			logger.error("Error in querying : " + e.getMessage());
 			e.printStackTrace();
 		}
 
 		logger.info(
-				"Leaving - com.arris.sfdc.api.rest.CustomerServicePart_Upsert.upsertPartNumber(PartNumberInput approvalInputElement) :  updateOutputElement : "
+				"Leaving - Provider Class"
 						+ orderStatusOutput);
 		return orderStatusOutput;
 
@@ -324,23 +351,24 @@ public class OrderStatusOperationServiceProvider {
 			// queryAccountInput.getCustomerNumberHnMC();
 			// System.out.println("customer number is :" + customerNumber);
 			QueryResult queryResult = connection
-					.query("select Id from Trials__c where Trial__c = '" + queryReplaceOpportunity + "'");
+					.query("select Id, Opportunity__c from Trials__c where Trial__c = '" + queryReplaceOpportunity + "'");
 
 			if (null != queryResult) {
 				for (SObject sObject : queryResult.getRecords()) {
 					Trials__c trials__c = (Trials__c) sObject;
 					orderStatusOutput.setIDHeaderQueryTrialwIR(trials__c.getId());
+					orderStatusOutput.setIDHeaderQueryOpportunity(trials__c.getOpportunity__c());
 					logger.info("Trials__c = " + trials__c);
 				}
 			}
 
 		} catch (Exception e) {
-			logger.error("Error in upserting : " + e.getMessage());
+			logger.error("Error in querying : " + e.getMessage());
 			e.printStackTrace();
 		}
 
 		logger.info(
-				"Leaving - com.arris.sfdc.api.rest.CustomerServicePart_Upsert.upsertPartNumber(PartNumberInput approvalInputElement) :  updateOutputElement : "
+				"Leaving - Provider Class"
 						+ orderStatusOutput);
 		return orderStatusOutput;
 
@@ -359,23 +387,24 @@ public class OrderStatusOperationServiceProvider {
 			// queryAccountInput.getCustomerNumberHnMC();
 			// System.out.println("customer number is :" + customerNumber);
 			QueryResult queryResult = connection
-					.query("select Id from Offer__c where Name = '" + headerOpportunityOffer + "'");
+					.query("select Id, Opportunity__c from Offer__c where Name = '" + headerOpportunityOffer + "'");
 
 			if (null != queryResult) {
 				for (SObject sObject : queryResult.getRecords()) {
 					Offer__c offer__c = (Offer__c) sObject;
-					orderStatusOutput.setIDHeaderQueryTrialwIR(offer__c.getId());
+					orderStatusOutput.setIDHeaderQueryOffer(offer__c.getId());
+					orderStatusOutput.setIDHeaderQueryQuotesOpportunityC(offer__c.getOpportunity__c());
 					logger.info("Offer__c = " + offer__c);
 				}
 			}
 
 		} catch (Exception e) {
-			logger.error("Error in upserting : " + e.getMessage());
+			logger.error("Error in querying : " + e.getMessage());
 			e.printStackTrace();
 		}
 
 		logger.info(
-				"Leaving - com.arris.sfdc.api.rest.CustomerServicePart_Upsert.upsertPartNumber(PartNumberInput approvalInputElement) :  updateOutputElement : "
+				"Leaving - Provider Class"
 						+ orderStatusOutput);
 		return orderStatusOutput;
 
@@ -405,12 +434,12 @@ public class OrderStatusOperationServiceProvider {
 			}
 
 		} catch (Exception e) {
-			logger.error("Error in upserting : " + e.getMessage());
+			logger.error("Error in querying : " + e.getMessage());
 			e.printStackTrace();
 		}
 
 		logger.info(
-				"Leaving - com.arris.sfdc.api.rest.CustomerServicePart_Upsert.upsertPartNumber(PartNumberInput approvalInputElement) :  updateOutputElement : "
+				"Leaving - Provider Class"
 						+ orderStatusOutput);
 		return orderStatusOutput;
 
@@ -440,12 +469,12 @@ public class OrderStatusOperationServiceProvider {
 			}
 
 		} catch (Exception e) {
-			logger.error("Error in upserting : " + e.getMessage());
+			logger.error("Error in querying : " + e.getMessage());
 			e.printStackTrace();
 		}
 
 		logger.info(
-				"Leaving - com.arris.sfdc.api.rest.CustomerServicePart_Upsert.upsertPartNumber(PartNumberInput approvalInputElement) :  updateOutputElement : "
+				"Leaving - Provider Class"
 						+ orderStatusOutput);
 		return orderStatusOutput;
 
@@ -474,12 +503,12 @@ public class OrderStatusOperationServiceProvider {
 			}
 
 		} catch (Exception e) {
-			logger.error("Error in upserting : " + e.getMessage());
+			logger.error("Error in querying : " + e.getMessage());
 			e.printStackTrace();
 		}
 
 		logger.info(
-				"Leaving - com.arris.sfdc.api.rest.CustomerServicePart_Upsert.upsertPartNumber(PartNumberInput approvalInputElement) :  updateOutputElement : "
+				"Leaving - Provider Class"
 						+ orderStatusOutput);
 		return orderStatusOutput;
 
@@ -508,12 +537,12 @@ public class OrderStatusOperationServiceProvider {
 			}
 
 		} catch (Exception e) {
-			logger.error("Error in upserting : " + e.getMessage());
+			logger.error("Error in querying : " + e.getMessage());
 			e.printStackTrace();
 		}
 
 		logger.info(
-				"Leaving - com.arris.sfdc.api.rest.CustomerServicePart_Upsert.upsertPartNumber(PartNumberInput approvalInputElement) :  updateOutputElement : "
+				"Leaving - Provider Class"
 						+ orderStatusOutput);
 		return orderStatusOutput;
 
@@ -541,12 +570,12 @@ public class OrderStatusOperationServiceProvider {
 			}
 
 		} catch (Exception e) {
-			logger.error("Error in upserting : " + e.getMessage());
+			logger.error("Error in querying : " + e.getMessage());
 			e.printStackTrace();
 		}
 
 		logger.info(
-				"Leaving - com.arris.sfdc.api.rest.CustomerServicePart_Upsert.upsertPartNumber(PartNumberInput approvalInputElement) :  updateOutputElement : "
+				"Leaving - Provider Class"
 						+ orderStatusOutput);
 		return orderStatusOutput;
 
@@ -575,12 +604,12 @@ public class OrderStatusOperationServiceProvider {
 			}
 
 		} catch (Exception e) {
-			logger.error("Error in upserting : " + e.getMessage());
+			logger.error("Error in querying : " + e.getMessage());
 			e.printStackTrace();
 		}
 
 		logger.info(
-				"Leaving - com.arris.sfdc.api.rest.CustomerServicePart_Upsert.upsertPartNumber(PartNumberInput approvalInputElement) :  updateOutputElement : "
+				"Leaving - Provider Class"
 						+ orderStatusOutput);
 		return orderStatusOutput;
 
@@ -609,12 +638,12 @@ public class OrderStatusOperationServiceProvider {
 			}
 
 		} catch (Exception e) {
-			logger.error("Error in upserting : " + e.getMessage());
+			logger.error("Error in querying : " + e.getMessage());
 			e.printStackTrace();
 		}
 
 		logger.info(
-				"Leaving - com.arris.sfdc.api.rest.CustomerServicePart_Upsert.upsertPartNumber(PartNumberInput approvalInputElement) :  updateOutputElement : "
+				"Leaving - Provider Class"
 						+ orderStatusOutput);
 		return orderStatusOutput;
 
@@ -644,12 +673,12 @@ public class OrderStatusOperationServiceProvider {
 			}
 
 		} catch (Exception e) {
-			logger.error("Error in upserting : " + e.getMessage());
+			logger.error("Error in querying : " + e.getMessage());
 			e.printStackTrace();
 		}
 
 		logger.info(
-				"Leaving - com.arris.sfdc.api.rest.CustomerServicePart_Upsert.upsertPartNumber(PartNumberInput approvalInputElement) :  updateOutputElement : "
+				"Leaving - Provider Class"
 						+ orderStatusOutput);
 		return orderStatusOutput;
 
@@ -678,12 +707,12 @@ public class OrderStatusOperationServiceProvider {
 			}
 
 		} catch (Exception e) {
-			logger.error("Error in upserting : " + e.getMessage());
+			logger.error("Error in querying : " + e.getMessage());
 			e.printStackTrace();
 		}
 
 		logger.info(
-				"Leaving - com.arris.sfdc.api.rest.CustomerServicePart_Upsert.upsertPartNumber(PartNumberInput approvalInputElement) :  updateOutputElement : "
+				"Leaving - Provider Class"
 						+ orderStatusOutput);
 		return orderStatusOutput;
 
@@ -712,15 +741,91 @@ public class OrderStatusOperationServiceProvider {
 			}
 
 		} catch (Exception e) {
-			logger.error("Error in upserting : " + e.getMessage());
+			logger.error("Error in querying : " + e.getMessage());
 			e.printStackTrace();
 		}
 
 		logger.info(
-				"Leaving - com.arris.sfdc.api.rest.CustomerServicePart_Upsert.upsertPartNumber(PartNumberInput approvalInputElement) :  updateOutputElement : "
+				"Leaving - Provider Class"
 						+ orderStatusOutput);
 		return orderStatusOutput;
 
 	}
+	
+	public OutputElement PerformQueryCoporateContract(EnterpriseConnection connection,
+			String headerQueryReplaceOpportunity) {
+		logger.info("Entering --" + headerQueryReplaceOpportunity);
+		// Below code is for to Select in SFDC using connection
+		OutputElement orderStatusOutput = new OutputElement();
+		// String queryIDHeaderQueryBillToOutput =
+		// orderStatusOutput.getIDHeaderQueryBillTo();
+		try {
+			logger.info("SFDC Select Begins");
+			// String customerNumber =
+			// queryAccountInput.getCustomerNumberHnMC();
+			// System.out.println("customer number is :" + customerNumber);
+			QueryResult queryResult = connection
+					.query("SELECT Id FROM Corporate_Contract__c WHERE Contract_Number__c = '" + headerQueryReplaceOpportunity + "'");
+
+			if (null != queryResult) {
+				for (SObject sObject : queryResult.getRecords()) {
+					Corporate_Contract__c corporate = (Corporate_Contract__c) sObject;
+					
+					orderStatusOutput.setIDHeaderQueryOpportunity(corporate.getId());
+					logger.info("corporate = " + corporate);
+				}
+			}
+
+		} catch (Exception e) {
+			logger.error("Error in querying : " + e.getMessage());
+			e.printStackTrace();
+		}
+
+		logger.info(
+				"Leaving - Provider Class"
+						+ orderStatusOutput);
+		return orderStatusOutput;
+
+	}
+	
+	
+	public OutputElement PerformQueryProject(EnterpriseConnection connection,
+			String headerQueryReplaceOpportunity) {
+		logger.info("Entering --" + headerQueryReplaceOpportunity);
+		// Below code is for to Select in SFDC using connection
+		OutputElement orderStatusOutput = new OutputElement();
+		// String queryIDHeaderQueryBillToOutput =
+		// orderStatusOutput.getIDHeaderQueryBillTo();
+		try {
+			logger.info("SFDC Select Begins");
+			// String customerNumber =
+			// queryAccountInput.getCustomerNumberHnMC();
+			// System.out.println("customer number is :" + customerNumber);
+			QueryResult queryResult = connection
+					.query("SELECT Id, pse__Opportunity__c FROM pse__Proj__c WHERE PS_Project__c =  '" + headerQueryReplaceOpportunity + "'");
+
+			if (null != queryResult) {
+				for (SObject sObject : queryResult.getRecords()) {
+					Pse__Proj__c pse__Proj__c = (Pse__Proj__c) sObject;
+					orderStatusOutput.setIDHeaderQueryOpportunity(pse__Proj__c.getId());
+					orderStatusOutput.setIDHeaderPSEOpportunityC(pse__Proj__c.getPse__Opportunity__c());
+					logger.info("pse__Proj__c = " + pse__Proj__c);
+				}
+			}
+
+		} catch (Exception e) {
+			logger.error("Error in querying : " + e.getMessage());
+			e.printStackTrace();
+		}
+
+		logger.info(
+				"Leaving - Provider Class "
+						+ orderStatusOutput);
+		return orderStatusOutput;
+
+	}
+	
+	
+	
 
 }
