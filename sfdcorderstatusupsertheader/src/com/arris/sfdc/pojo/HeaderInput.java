@@ -9,18 +9,12 @@
 package com.arris.sfdc.pojo;
 
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
-
-import com.sforce.soap.enterprise.sobject.Account;
-import com.sforce.soap.enterprise.sobject.Order_Header__c;
 
 
 /**
@@ -124,7 +118,9 @@ import com.sforce.soap.enterprise.sobject.Order_Header__c;
     "quoteC",
     "customerNumberHnMC",
     "billToAddressC",
-    "shipToAddressC"
+    "shipToAddressC",
+    "psaProjectC",
+    "psaProjectC"
 })
 @XmlRootElement(name = "HeaderInput")
 public class HeaderInput {
@@ -211,6 +207,10 @@ public class HeaderInput {
     protected String billToAddressC;
     @XmlElement(name = "Ship_To_Address__c", required = false)
     protected String shipToAddressC;
+    @XmlElement(name = "PSA_Project__c",  required = false)
+    protected String psaProjectC;
+    @XmlElement(name = "Corporate_Contract__c",  required = false)
+    protected String corporateContractC;
 
     /**
      * Gets the value of the name property.
@@ -1208,6 +1208,54 @@ public class HeaderInput {
      */
     public void setShipToAddressC(String value) {
         this.shipToAddressC = value;
+    }
+    
+    /**
+     * Gets the value of the psaProjectC property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link JAXBElement }{@code <}{@link String }{@code >}
+     *     
+     */
+    public String getPSAProjectC() {
+        return psaProjectC;
+    }
+
+    /**
+     * Sets the value of the psaProjectC property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link JAXBElement }{@code <}{@link String }{@code >}
+     *     
+     */
+    public void setPSAProjectC(String value) {
+        this.psaProjectC = value;
+    }
+
+    /**
+     * Gets the value of the corporateContractC property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link JAXBElement }{@code <}{@link String }{@code >}
+     *     
+     */
+    public String getCorporateContractC() {
+        return corporateContractC;
+    }
+
+    /**
+     * Sets the value of the corporateContractC property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link JAXBElement }{@code <}{@link String }{@code >}
+     *     
+     */
+    public void setCorporateContractC(String value) {
+        this.corporateContractC = value;
     }
 
 }

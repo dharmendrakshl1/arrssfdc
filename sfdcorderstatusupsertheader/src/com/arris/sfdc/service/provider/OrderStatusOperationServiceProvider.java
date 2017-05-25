@@ -114,6 +114,8 @@ public class OrderStatusOperationServiceProvider {
 		order.setRequest_Date_Type__c(headerInput.getRequestDateTypeC());
 		order.setQuote__c(headerInput.getQuoteC());
 		order.setBill_To_Address__c(headerInput.getBillToAddressC());
+		order.setPSA_Project__c(headerInput.getPSAProjectC());
+		order.setCorporate_Contract__c(headerInput.getCorporateContractC());
 
 		Account acc = new Account();
 		acc.setCustomer_Number_HnM__c(headerInput.getCustomerNumberHnMC());
