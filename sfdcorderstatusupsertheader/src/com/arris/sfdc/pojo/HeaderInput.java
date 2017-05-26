@@ -120,7 +120,7 @@ import javax.xml.bind.annotation.XmlType;
     "billToAddressC",
     "shipToAddressC",
     "psaProjectC",
-    "psaProjectC"
+    "corporateContractC"
 })
 @XmlRootElement(name = "HeaderInput")
 public class HeaderInput {
